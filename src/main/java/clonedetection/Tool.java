@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 
 /**
@@ -232,11 +233,10 @@ public class Tool {
         List<List<File>> files = getFile(Config.basePath + "FDG");
         for (List<File> folder : files) {
             for (File file : folder) {
+                //get folder name
                 String name = getLastTwo(file.getAbsolutePath());
-
                 //函数id和name的映射，单独处理的，id不是全局唯一
                 Map<String, String> id2name = new HashMap<>();
-
                 //函数name和id的映射
                 Map<String, String> name2id = new HashMap<>();
                 try {
@@ -251,14 +251,23 @@ public class Tool {
                         name2id.put(tmp[0], tmp[1]);
                     });
 
-                    File[] callFiles = new File(file.getAbsolutePath().concat(File.separator.concat("call"))).listFiles();
+                    File[] callFuncs = new File(file.getAbsolutePath().concat(File.separator.concat("call"))).listFiles();
+                    String srcCode = FileUtils.readFileToString(getSourceCode(new File(Config.basePath.concat("FDG".concat(File.separator).concat(name)))), "utf-8");
+
                     //文件名为被调用的函数id
-                    for (File beCalledFile : callFiles) {
-                        List<String> callLineList = FileUtils.readLines(beCalledFile, "utf-8");
+                    for (File beCalledFunc : callFuncs) {
+                        List<String> callLineList = FileUtils.readLines(beCalledFunc, "utf-8");
+
+                        //Call Loc recorder
+                        Map<Integer, List<Integer>> callLocMap = new HashMap<>();
 
                         //获得被调用函数名（因为不存在函数重载，所以函数名具有唯一性）
-                        String beCalledFuncName = id2name.get(beCalledFile.getName().substring(0, beCalledFile.getName().indexOf(".")));
+                        String beCalledFileId = beCalledFunc.getName().substring(0, beCalledFunc.getName().indexOf("."));
+                        String beCalledFuncName = id2name.get(beCalledFileId);
+
+                        //循环函数调用语句
                         for (String callLine : callLineList) {
+                            //获取调用函数语句
                             Matcher matcher = Config.callPattern.matcher(callLine);
                             if (matcher.find()) {
                                 String s = matcher.group(0);
@@ -268,6 +277,7 @@ public class Tool {
                                 String callFuncName = id2name.get(jsonObject.getString("functionId"));
                                 //获得具体调用实施处的代码
                                 String callCode = jsonObject.getString("code");
+//                                callCode = callCode.replace("(", "\\(").replace(")", "\\)").replace("[", "\\[");
 
                                 String callFuncId = name2id.get(callFuncName);
                                 String beCalledFuncId = name2id.get(beCalledFuncName);
@@ -275,31 +285,69 @@ public class Tool {
                                 //TODO
                                 //读取相应的dot文件，根据callCode找到具体是哪个代码片段进行调用操作。
                                 File dotFile = new File(Config.basePath.concat("dot").concat(File.separator.concat(name).concat(File.separator.concat(callFuncId).concat(".dot"))));
-                                System.out.println(callCode);
+//                                System.out.println(callCode);
 
                                 GraphParser parser = new GraphParser(new FileInputStream(dotFile));
                                 Map<String, GraphNode> nodes = parser.getNodes();
 //                                Map<String, GraphEdge> edges = parser.getEdges();
 
                                 int cnt = 0;
+                                //遍历dot文件中的每一行
                                 for (GraphNode node : nodes.values()) {
-                                    Matcher codeMatcher = Config.codePatterh.matcher(node.getAttribute("label").toString());
-                                    while (codeMatcher.find()) {
+                                    //TODO 代码中莫名其妙的换行和空格很头疼
+                                    Matcher codeMatcher = Config.codePattern.matcher(node.getAttribute("label").toString());
+
+                                    //一行中有多个调用函数语句
+                                    if (codeMatcher.find()) {
                                         String curCode = codeMatcher.group(1);
+
                                         if (curCode.contains(callCode)) {
-                                            cnt++;
-                                            System.out.println(node.getId());
+                                            int statementId = Integer.parseInt(node.getId());
+                                            int idx = curCode.indexOf(callCode);
+
+                                            if (callLocMap.containsKey(statementId)) {
+                                                //search next one
+                                                List<Integer> tmp = callLocMap.get(statementId);
+                                                int startIdx = tmp.get(tmp.size() - 1) + 1;
+                                                int findIdx = curCode.indexOf(callCode, startIdx);
+                                                tmp.add(findIdx);
+                                                callLocMap.put(statementId, tmp);
+                                                cnt++;
+                                            } else {
+                                                boolean flag = true;
+                                                System.out.println("statementId:"+statementId);
+                                                for (int key : callLocMap.keySet()) {
+                                                    System.out.println("key=" + key);
+                                                    if (key == statementId) {
+                                                        flag = false;
+                                                    }
+                                                }
+                                                if (flag) {
+                                                    int findIdx = curCode.indexOf(callCode);
+                                                    List<Integer> tmp = new ArrayList<>();
+                                                    tmp.add(findIdx);
+                                                    System.out.println("putid=" + statementId);
+                                                    callLocMap.put(statementId, tmp);
+                                                    System.out.println("curCode:" + curCode);
+                                                    cnt++;
+                                                }
+                                            }
+                                            break;
                                         }
                                     }
-
-//                                    System.out.println(node.getId() + "," + node.getAttribute("label"));
                                 }
-                                if (cnt > 1) {
-                                    System.out.println("More than one, " + dotFile.getAbsolutePath());
+
+                                if (cnt != 1) {
+                                    System.out.println(callCode);
+                                    System.out.println("cnt:" + cnt);
+                                    System.err.println("Error." + dotFile.getAbsolutePath());
                                     System.exit(1);
+                                } else {
+                                    System.out.println("beCalledFuncId," + name2id.get(id2name.get(beCalledFileId)));
+                                    System.out.println("fine," + dotFile.getAbsolutePath());
                                 }
+                                System.out.println("---");
 
-                                System.exit(1);
                                 //然后根据那个代码片段的id，产生新的edge
                             }
                         }
