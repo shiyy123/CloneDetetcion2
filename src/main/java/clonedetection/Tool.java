@@ -1,6 +1,5 @@
 package clonedetection;
 
-import com.paypal.digraph.parser.GraphEdge;
 import com.paypal.digraph.parser.GraphNode;
 import com.paypal.digraph.parser.GraphParser;
 import org.apache.commons.io.FileUtils;
@@ -235,8 +234,6 @@ public class Tool {
             for (File file : folder) {
                 String name = getLastTwo(file.getAbsolutePath());
 
-//              List<String> codeList = FileUtils.readLines(getSourceCode(file), "utf-8");
-
                 //函数id和name的映射，单独处理的，id不是全局唯一
                 Map<String, String> id2name = new HashMap<>();
 
@@ -262,7 +259,7 @@ public class Tool {
                         //获得被调用函数名（因为不存在函数重载，所以函数名具有唯一性）
                         String beCalledFuncName = id2name.get(beCalledFile.getName().substring(0, beCalledFile.getName().indexOf(".")));
                         for (String callLine : callLineList) {
-                            Matcher matcher = Config.pattern.matcher(callLine);
+                            Matcher matcher = Config.callPattern.matcher(callLine);
                             if (matcher.find()) {
                                 String s = matcher.group(0);
                                 JSONObject jsonObject = new JSONObject(s);
@@ -282,14 +279,24 @@ public class Tool {
 
                                 GraphParser parser = new GraphParser(new FileInputStream(dotFile));
                                 Map<String, GraphNode> nodes = parser.getNodes();
-                                Map<String, GraphEdge> edges = parser.getEdges();
+//                                Map<String, GraphEdge> edges = parser.getEdges();
 
+                                int cnt = 0;
                                 for (GraphNode node : nodes.values()) {
-                                    System.out.println(node.getId() + "," + node.getAttribute("label"));
-                                }
+                                    Matcher codeMatcher = Config.codePatterh.matcher(node.getAttribute("label").toString());
+                                    while (codeMatcher.find()) {
+                                        String curCode = codeMatcher.group(1);
+                                        if (curCode.contains(callCode)) {
+                                            cnt++;
+                                            System.out.println(node.getId());
+                                        }
+                                    }
 
-                                for (GraphEdge edge : edges.values()) {
-                                    System.out.println(edge.getId() + "," + edge.getAttributes());
+//                                    System.out.println(node.getId() + "," + node.getAttribute("label"));
+                                }
+                                if (cnt > 1) {
+                                    System.out.println("More than one, " + dotFile.getAbsolutePath());
+                                    System.exit(1);
                                 }
 
                                 System.exit(1);
