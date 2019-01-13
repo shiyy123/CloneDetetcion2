@@ -4,6 +4,7 @@ import com.paypal.digraph.parser.GraphEdge;
 import com.paypal.digraph.parser.GraphNode;
 import com.paypal.digraph.parser.GraphParser;
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 
 /**
@@ -389,6 +389,25 @@ public class Tool {
         }
     }
 
+    JSONArray call2JSON(File call) {
+        JSONArray res = new JSONArray();
+        try {
+            List<String> list = FileUtils.readLines(call, "utf-8");
+            for (int i = 0; i < list.size(); i += 5) {
+                JSONObject item = new JSONObject();
+                item.put("callStatementId", list.get(i).substring(list.get(i).indexOf(":") + 1));
+                item.put("callFuncId", list.get(i + 1).substring(list.get(i + 1).indexOf(":") + 1));
+                item.put("beCalledFuncId", list.get(i + 2).substring(list.get(i + 2).indexOf(":") + 1));
+                item.put("callDotFile", list.get(i + 3).substring(list.get(i + 3).indexOf(":") + 1));
+                res.put(item);
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return res;
+    }
+
     /**
      * 生成CFG的边
      */
@@ -424,4 +443,118 @@ public class Tool {
             }
         }
     }
+
+    void splitByFeature() {
+        List<List<File>> callFolder = getFile(Config.basePath.concat("call"));
+        for (List<File> file1 : callFolder) {
+            for (File file2 : file1) {
+                String curFolder = getLastTwo(file2.getAbsolutePath());
+
+                File callFile = new File(file2.getAbsolutePath().concat(File.separator.concat("call.txt")));
+
+                File funcFile = new File(Config.basePath.concat("func").concat(File.separator).concat(curFolder.concat(File.separator.concat("func.txt"))));
+                try {
+                    List<String> funcLineList = FileUtils.readLines(funcFile, "utf-8");
+                    List<String> funcList = new ArrayList<>();
+                    funcLineList.forEach(s -> funcList.add(s.split("\t")[1]));
+
+                    List<Set<String>> features = new ArrayList<>();
+
+                    JSONArray array = call2JSON(callFile);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject item = array.getJSONObject(i);
+                        String callFuncId = item.getString("callFuncId");
+                        String beCalledFuncId = item.getString("beCalledFuncId");
+
+                        boolean find = false;
+                        for (int j = 0; j < features.size(); j++) {
+                            Set<String> set = features.get(j);
+                            if (set.contains(callFuncId) || set.contains(beCalledFuncId)) {
+                                find = true;
+                                set.add(callFuncId);
+                                set.add(beCalledFuncId);
+                            }
+                            features.set(j, set);
+                        }
+
+                        if (!find) {
+                            Set<String> set = new HashSet<>();
+                            set.add(callFuncId);
+                            set.add(beCalledFuncId);
+                            features.add(set);
+                        }
+                    }
+
+                    if (features.size() != 1) {
+                        features = mergeSet(features);
+                    }
+
+                    System.out.println("features");
+
+                    features.forEach(System.out::println);
+
+                    if (features.size() != 1) {
+                        System.out.println(callFile.getAbsolutePath());
+                        System.out.println("amazing");
+                    }
+
+                    System.out.println("---");
+
+                    File featureFolder = new File(Config.basePath.concat("feature").concat(File.separator).concat(curFolder));
+                    if (!featureFolder.exists()) {
+                        featureFolder.mkdirs();
+                    }
+                    File feature = new File(featureFolder.getAbsolutePath().concat(File.separator.concat("feature.txt")));
+
+                    features.forEach(x -> {
+                        try {
+                            FileUtils.write(feature, x.toString() + "\n", "utf-8", true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    System.out.println(feature.getAbsolutePath());
+
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    List<Set<String>> mergeSet(List<Set<String>> features) {
+
+        List<Boolean> removable = new ArrayList<>();
+
+        for (int i = 0; i < features.size(); i++) {
+            removable.add(false);
+        }
+
+        for (int i = 0; i < features.size() - 1; i++) {
+            for (int j = i + 1; j < features.size(); j++) {
+
+                if (removable.get(i).equals(false) && removable.get(j).equals(false)) {
+                    Set<String> s1 = new HashSet<>(features.get(i));
+                    s1.retainAll(features.get(j));
+
+                    if (!s1.isEmpty()) {
+                        removable.set(j, true);
+
+                        Set<String> s2 = new HashSet<>(features.get(i));
+                        s2.addAll(features.get(j));
+                        features.set(i, s2);
+                    }
+                }
+            }
+        }
+
+        for (int i = removable.size() - 1; i >= 0; i--) {
+            if (removable.get(i).equals(true)) {
+                features.remove(i);
+            }
+        }
+        return features;
+    }
+
 }
