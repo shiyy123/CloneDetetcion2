@@ -1,5 +1,6 @@
 package clonedetection;
 
+import com.paypal.digraph.parser.GraphEdge;
 import com.paypal.digraph.parser.GraphNode;
 import com.paypal.digraph.parser.GraphParser;
 import org.apache.commons.io.FileUtils;
@@ -8,6 +9,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -382,6 +384,42 @@ public class Tool {
                     }
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 生成CFG的边
+     */
+    void generateEdge() {
+        String dotFolder = Config.basePath.concat("dot");
+        List<List<File>> fileList = getFile(dotFolder);
+        for (List<File> files : fileList) {
+            for (File dotFolderFile : files) {
+                String folderName = getLastTwo(dotFolderFile.getAbsolutePath());
+                File[] dots = dotFolderFile.listFiles();
+                for (File dot : dots) {
+                    try {
+                        File edgeFolder = new File(Config.basePath.concat("edge").concat(File.separator.concat(folderName)));
+                        if (!edgeFolder.exists()) {
+                            edgeFolder.mkdirs();
+                        }
+                        File edge = new File(edgeFolder.getAbsolutePath().concat(File.separator.concat(dot.getName().substring(0, dot.getName().indexOf(".")).concat(".edgelist"))));
+
+                        GraphParser graphParser = new GraphParser(new FileInputStream(dot));
+                        Map<String, GraphEdge> edges = graphParser.getEdges();
+                        edges.forEach((key, val) -> {
+                            String s = key.replace("-", " ");
+                            try {
+                                FileUtils.write(edge, s + "\n", "utf-8", true);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
