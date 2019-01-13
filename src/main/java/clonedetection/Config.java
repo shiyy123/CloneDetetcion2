@@ -8,6 +8,6 @@ import java.util.regex.Pattern;
  */
 public class Config {
     public static String basePath = "/home/cary/Documents/Data/CloneData/";
-    public static Pattern callPattern = Pattern.compile("\\{childNum:(.*)\"CallExpression\"}", Pattern.DOTALL);
-    public static Pattern codePattern = Pattern.compile("code:(.*)isCFGNode:", Pattern.DOTALL);
+    public static Pattern callPattern = Pattern.compile("\\{childNum:(.*)\"CallExpression\"}");
+    public static Pattern codePattern = Pattern.compile("code:(.*)isCFG", Pattern.DOTALL);
 }

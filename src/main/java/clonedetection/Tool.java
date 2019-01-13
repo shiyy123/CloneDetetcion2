@@ -228,7 +228,24 @@ public class Tool {
         }
     }
 
-    void checkUniqueFuncCall() {
+    String toOneLine(String s) {
+        String[] tmps = s.split("\n");
+
+        StringBuilder res = new StringBuilder();
+        if (tmps.length > 1) {
+            for (int i = 0; i < tmps.length - 1; i++) {
+                res.append(tmps[i], 0, tmps[i].length() - 1).append(" ");
+            }
+            res.append(tmps[tmps.length - 1]);
+            String s1 = res.toString();
+            s1 = s1.replace("  ", " ");
+            return s1;
+        } else {
+            return s;
+        }
+    }
+
+    void generateFuncCall() {
 
         List<List<File>> files = getFile(Config.basePath + "FDG");
         for (List<File> folder : files) {
@@ -293,6 +310,7 @@ public class Tool {
 
                                 int cnt = 0;
                                 //遍历dot文件中的每一行
+                                int callStatementId = -1;
                                 for (GraphNode node : nodes.values()) {
                                     //TODO 代码中莫名其妙的换行和空格很头疼
                                     Matcher codeMatcher = Config.codePattern.matcher(node.getAttribute("label").toString());
@@ -300,6 +318,8 @@ public class Tool {
                                     //一行中有多个调用函数语句
                                     if (codeMatcher.find()) {
                                         String curCode = codeMatcher.group(1);
+
+                                        curCode = toOneLine(curCode);
 
                                         if (curCode.contains(callCode)) {
                                             int statementId = Integer.parseInt(node.getId());
@@ -312,12 +332,13 @@ public class Tool {
                                                 int findIdx = curCode.indexOf(callCode, startIdx);
                                                 tmp.add(findIdx);
                                                 callLocMap.put(statementId, tmp);
+                                                callStatementId = Integer.parseInt(node.getId());
                                                 cnt++;
                                             } else {
                                                 boolean flag = true;
-                                                System.out.println("statementId:"+statementId);
+//                                                System.out.println("statementId:" + statementId);
                                                 for (int key : callLocMap.keySet()) {
-                                                    System.out.println("key=" + key);
+//                                                    System.out.println("key=" + key);
                                                     if (key == statementId) {
                                                         flag = false;
                                                     }
@@ -326,9 +347,10 @@ public class Tool {
                                                     int findIdx = curCode.indexOf(callCode);
                                                     List<Integer> tmp = new ArrayList<>();
                                                     tmp.add(findIdx);
-                                                    System.out.println("putid=" + statementId);
+//                                                    System.out.println("putid=" + statementId);
                                                     callLocMap.put(statementId, tmp);
-                                                    System.out.println("curCode:" + curCode);
+//                                                    System.out.println("curCode:" + curCode);
+                                                    callStatementId = Integer.parseInt(node.getId());
                                                     cnt++;
                                                 }
                                             }
@@ -338,17 +360,23 @@ public class Tool {
                                 }
 
                                 if (cnt != 1) {
-                                    System.out.println(callCode);
+                                    System.out.println("callCode:" + callCode);
                                     System.out.println("cnt:" + cnt);
                                     System.err.println("Error." + dotFile.getAbsolutePath());
                                     System.exit(1);
                                 } else {
-                                    System.out.println("beCalledFuncId," + name2id.get(id2name.get(beCalledFileId)));
-                                    System.out.println("fine," + dotFile.getAbsolutePath());
-                                }
-                                System.out.println("---");
+                                    File callFolder = new File(Config.basePath.concat("call").concat(File.separator).concat(name));
+                                    if (!callFolder.exists()) {
+                                        callFolder.mkdirs();
+                                    }
+                                    File callFile = new File(callFolder.getAbsolutePath().concat(File.separator.concat("call.txt")));
 
-                                //然后根据那个代码片段的id，产生新的edge
+                                    FileUtils.write(callFile, "callStatementId:" + callStatementId + "\n", "utf-8", true);
+                                    FileUtils.write(callFile, "callFuncId:" + callFuncId + "\n", "utf-8", true);
+                                    FileUtils.write(callFile, "beCalledFuncId:" + beCalledFuncId + "\n", "utf-8", true);
+                                    FileUtils.write(callFile, "callDotFile:" + dotFile.getAbsolutePath() + "\n", "utf-8", true);
+                                    FileUtils.write(callFile, "---" + "\n", "utf-8", true);
+                                }
                             }
                         }
                     }
