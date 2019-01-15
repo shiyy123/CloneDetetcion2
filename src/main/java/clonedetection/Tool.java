@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 
@@ -301,7 +302,6 @@ public class Tool {
                                 String callFuncId = name2id.get(callFuncName);
                                 String beCalledFuncId = name2id.get(beCalledFuncName);
 
-                                //TODO
                                 //读取相应的dot文件，根据callCode找到具体是哪个代码片段进行调用操作。
                                 File dotFile = new File(Config.basePath.concat("dot").concat(File.separator.concat(name).concat(File.separator.concat(callFuncId).concat(".dot"))));
 //                                System.out.println(callCode);
@@ -314,7 +314,6 @@ public class Tool {
                                 //遍历dot文件中的每一行
                                 int callStatementId = -1;
                                 for (GraphNode node : nodes.values()) {
-                                    //TODO 代码中莫名其妙的换行和空格很头疼
                                     Matcher codeMatcher = Config.codePattern.matcher(node.getAttribute("label").toString());
 
                                     //一行中有多个调用函数语句
@@ -557,4 +556,214 @@ public class Tool {
         return features;
     }
 
+    List<Set<String>> getFuncIds(File file) {
+        List<Set<String>> res = new ArrayList<>();
+        try {
+            List<String> lines = FileUtils.readLines(file, "utf-8");
+
+            Set<String> set = new HashSet<>();
+            for (String line : lines) {
+                String s = line.substring(1, line.length() - 1).replace(" ", "");
+                set.addAll(Arrays.asList(s.split(",")));
+                res.add(set);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    //TODO 根据call文件中的函数调用关系
+    // 对于自身调用自身的特殊情况，增加一条指向Entry的边
+    // 对于调用其他函数的情况，寻找所有指向该语句的statementId和该语句指向的statementId
+    // 将其他函数的Entry和Exit的id替换上去，即可
+    void generateFeatureEdge() {
+        List<List<File>> featureList = getFile(Config.basePath.concat("feature"));
+        featureList.forEach(x -> {
+            x.forEach(featureFile -> {
+                String folderName = getLastTwo(featureFile.getAbsolutePath());
+//                System.out.println(folderName);
+                List<Set<String>> featureFuncIdSetList = getFuncIds(new File(featureFile.getAbsolutePath().concat(File.separator.concat("feature.txt"))));
+
+                //遍历文件中的多个功能（两个功能间，不存在函数的调用关系）
+                for (int j = 0; j < featureFuncIdSetList.size(); j++) {
+                    Set<String> featureFuncIdSet = featureFuncIdSetList.get(j);
+                    //获取功能中所有函数的FDG的边
+                    List<Edge> featureFuncEdgesFileList = new ArrayList<>();
+
+                    for (String funcId : featureFuncIdSet) {
+                        File edgeFile = getSpecifyFile(folderName, "func_edge", funcId.concat(".edgelist"));
+//                        File dotFile = getSpecifyFile(folderName, "dot", funcId.concat(".dot"));
+
+                        try {
+                            List<String> lines = FileUtils.readLines(edgeFile, "utf-8");
+                            lines.forEach(line -> {
+                                Edge edge = new Edge(line.split(" ")[0], line.split(" ")[1]);
+                                featureFuncEdgesFileList.add(edge);
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    //提取出和本功能相关的函数调用关系（调用函数id，被调函数id，调用语句id）
+                    File callFile = new File(Config.basePath.concat("call").concat(File.separator.concat(folderName).concat(File.separator.concat("call.txt"))));
+                    JSONArray callJsonArray = call2JSON(callFile);
+                    JSONArray featureCallJsonArray = new JSONArray();
+
+                    for (int i = 0; i < callJsonArray.length(); i++) {
+                        try {
+                            JSONObject callJsonObject = callJsonArray.getJSONObject(i);
+                            String callFuncId = callJsonObject.getString("callFuncId");
+                            String beCalledFuncId = callJsonObject.getString("beCalledFuncId");
+
+                            if (featureFuncIdSet.contains(callFuncId) || featureFuncIdSet.contains(beCalledFuncId)) {
+                                featureCallJsonArray.put(callJsonObject);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    for (int i = 0; i < featureCallJsonArray.length(); i++) {
+                        try {
+                            JSONObject callJsonObject = featureCallJsonArray.getJSONObject(i);
+                            String callFuncId = callJsonObject.getString("callFuncId");
+                            String beCalledFuncId = callJsonObject.getString("beCalledFuncId");
+                            String callStatementId = callJsonObject.getString("callStatementId");
+
+                            // 包含功能中所有函数的CFG（语句id->语句id）
+                            File beCalledDotFile = getSpecifyFile(folderName, "dot", beCalledFuncId.concat(".dot"));
+
+//                            featureFuncEdgesFileList.forEach(edge -> {
+//                                System.out.println(edge.start + "," + edge.end);
+//                            });
+//                            System.out.println();
+
+                            modifyFuncEdge2FeatureEdge(callStatementId, featureFuncEdgesFileList, beCalledDotFile);
+
+//                            featureFuncEdgesFileList.forEach(edge -> {
+//
+//                                System.out.println(edge.start + "," + edge.end);
+//                            });
+//                            System.out.println();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    File featureFolder = new File(Config.basePath.concat("feature_edge").concat(File.separator.concat(folderName)));
+                    if (!featureFolder.exists()) {
+                        featureFolder.mkdirs();
+                    }
+
+                    File feature = new File(featureFolder.getAbsolutePath().concat(File.separator.concat(j + ".edgelist")));
+
+                    try {
+                        FileUtils.writeLines(feature, featureFuncEdgesFileList, "\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        });
+    }
+
+    void modifyFuncEdge2FeatureEdge(String statementId, List<Edge> featureFuncEdgesFileList, File beCalledDotFile) {
+        String entryId = getEntryId(beCalledDotFile);
+        String exitId = getExitId(beCalledDotFile);
+
+        for (Edge edge : featureFuncEdgesFileList) {
+            if (edge.start.equals(statementId)) {
+                edge.start = exitId;
+            }
+            if (edge.end.equals(statementId)) {
+                edge.end = entryId;
+            }
+        }
+    }
+
+    //获取调用该语句的所有语句的id,x->statementId
+    List<String> getCallStatementIdList(List<Edge> featureFuncEdgesFileList, String statementId) {
+        List<String> res = new ArrayList<>();
+        for (Edge edge : featureFuncEdgesFileList) {
+            if (edge.end.equals(statementId)) {
+                res.add(edge.start);
+            }
+        }
+        return res;
+    }
+
+    //获取被该函数调用的所有语句的id,statementId->x
+    List<String> getBeCalledStatementIdList(List<Edge> featureFuncEdgesFileList, String statementId) {
+        List<String> res = new ArrayList<>();
+        for (Edge edge : featureFuncEdgesFileList) {
+            if (edge.start.equals(statementId)) {
+                res.add(edge.end);
+            }
+        }
+        return res;
+    }
+
+    //从函数的控制流图中获取Entry语句的id
+    String getEntryId(File dotFile) {
+        String entryId = "-1";
+        try {
+            GraphParser parser = new GraphParser(new FileInputStream(dotFile));
+            Map<String, GraphNode> nodes = parser.getNodes();
+            for (GraphNode graphNode : nodes.values()) {
+                if (graphNode.getAttributes().toString().contains("type:CFGEntryNode")) {
+                    entryId = graphNode.getId();
+                    break;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return entryId;
+    }
+
+    //从函数的控制流图中获取Exit语句的id
+    String getExitId(File dotFile) {
+        String entryId = "-1";
+        try {
+            GraphParser parser = new GraphParser(new FileInputStream(dotFile));
+            Map<String, GraphNode> nodes = parser.getNodes();
+            for (GraphNode graphNode : nodes.values()) {
+                if (graphNode.getAttributes().toString().contains("type:CFGExitNode")) {
+                    entryId = graphNode.getId();
+                    break;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return entryId;
+    }
+
+    File getSpecifyFile(String folder, String type, String name) {
+        return new File(Config.basePath.concat(type.concat(File.separator.concat(folder.concat(File.separator.concat(name))))));
+    }
+
+    class Edge {
+        Edge(String start, String end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        String start;
+        String end;
+
+        @Override
+        public String toString() {
+            return start + " " + end;
+        }
+    }
+
+    public static void main(String[] args) {
+        Tool tool = new Tool();
+        System.out.println(tool.getEntryId(new File("/home/cary/Documents/Data/CloneData/dot/1/13/11179.dot")));
+
+    }
 }
