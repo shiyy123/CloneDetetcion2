@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.omg.SendingContext.RunTime;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -744,6 +745,78 @@ public class Tool {
 
     File getSpecifyFile(String folder, String type, String name) {
         return new File(Config.basePath.concat(type.concat(File.separator.concat(folder.concat(File.separator.concat(name))))));
+    }
+
+    void restartNeo4j() {
+        try {
+            Process p1 = Runtime.getRuntime().exec("/home/cary/software/neo4j-community-2.1.8/bin/neo4j stop");
+            CodeRepresentation.processMessage(p1.getInputStream(), true);
+            CodeRepresentation.processMessage(p1.getErrorStream(), true);
+            p1.waitFor();
+
+            Process p2 = Runtime.getRuntime().exec("/home/cary/software/neo4j-community-2.1.8/bin/neo4j start");
+            CodeRepresentation.processMessage(p2.getInputStream(), true);
+            CodeRepresentation.processMessage(p2.getErrorStream(), true);
+            p2.waitFor();
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void generateAST() {
+        File funcFile = new File(Config.basePath.concat("func.txt"));
+        try {
+            List<String> lines = FileUtils.readLines(funcFile, "utf-8");
+            for (int i = 0; i < lines.size(); i++) {
+                //因为Neo4j持续运行时间过长会出问题，每500个重启一次
+                if (i % 500 == 0) {
+                    restartNeo4j();
+                    System.out.println(i / 500);
+                }
+
+                String line = lines.get(i);
+                String funcId = line.split("\t")[1];
+                String funcPath = line.split("\t")[2];
+
+                String folderName = getFolderNameFromSrcPath(funcPath);
+
+                File dotFolder = new File(Config.basePath.concat("ast".concat(File.separator.concat(folderName))));
+                if (!dotFolder.exists()) {
+                    dotFolder.mkdirs();
+                }
+
+                File shFile = new File(Config.basePath.concat("sh".concat(File.separator.concat(funcId.concat(".sh")))));
+
+                File dotFile = new File(Config.basePath.concat("ast".concat(File.separator.concat(folderName.concat(File.separator).concat(funcId.concat(".dot"))))));
+
+                if (dotFile.exists() && dotFile.length() > 0) {
+                    continue;
+                }
+
+                System.out.println(i + "," + lines.get(i));
+
+
+                FileUtils.write(shFile, "#!/bin/sh\n", "utf-8", true);
+                FileUtils.write(shFile, "echo " + funcId + " | joern-plot-ast > " + dotFile.getAbsolutePath() + ";", "utf-8", true);
+
+                Process process = Runtime.getRuntime().exec("sh " + shFile);
+
+                CodeRepresentation.processMessage(process.getInputStream(), true);
+                CodeRepresentation.processMessage(process.getErrorStream(), true);
+
+                process.waitFor();
+
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    String getFolderNameFromSrcPath(String p) {
+        String[] tmp = p.split("/");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(tmp[tmp.length - 2]).append(File.separator).append(tmp[tmp.length - 1], 0, tmp[tmp.length - 1].indexOf("."));
+        return stringBuilder.toString();
     }
 
     class Edge {

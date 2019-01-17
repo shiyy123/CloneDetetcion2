@@ -8,6 +8,6 @@ public class Main {
 
     public static void main(String[] args) {
         Tool tool = new Tool();
-        tool.generateFeatureEdge();
+        tool.generateAST();
     }
 }

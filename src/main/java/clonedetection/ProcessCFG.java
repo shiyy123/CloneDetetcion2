@@ -20,15 +20,15 @@ public class ProcessCFG {
 
             for (int i = 0; i < lines.size(); i++) {
                 if(i % 500 == 0) {
-                    Process p1 = Runtime.getRuntime().exec("/home/cary/software/neo4j-community-2.1.8/bin/neo4j stop");
-                    CodeRepresentation.processMessage(p1.getInputStream(), true);
-                    CodeRepresentation.processMessage(p1.getErrorStream(), true);
-                    p1.waitFor();
-
-                    Process p2 = Runtime.getRuntime().exec("/home/cary/software/neo4j-community-2.1.8/bin/neo4j start");
-                    CodeRepresentation.processMessage(p2.getInputStream(), true);
-                    CodeRepresentation.processMessage(p2.getErrorStream(), true);
-                    p2.waitFor();
+//                    Process p1 = Runtime.getRuntime().exec("/home/cary/software/neo4j-community-2.1.8/bin/neo4j stop");
+//                    CodeRepresentation.processMessage(p1.getInputStream(), true);
+//                    CodeRepresentation.processMessage(p1.getErrorStream(), true);
+//                    p1.waitFor();
+//
+//                    Process p2 = Runtime.getRuntime().exec("/home/cary/software/neo4j-community-2.1.8/bin/neo4j start");
+//                    CodeRepresentation.processMessage(p2.getInputStream(), true);
+//                    CodeRepresentation.processMessage(p2.getErrorStream(), true);
+//                    p2.waitFor();
 
                     System.out.println(i / 500);
                 }
