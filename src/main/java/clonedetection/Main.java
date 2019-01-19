@@ -6,8 +6,13 @@ public class Main {
         codeRepresentation.processCode();
     }
 
+    /**
+     * 80/1376
+     * @param args
+     */
     public static void main(String[] args) {
         Tool tool = new Tool();
-        tool.generateAST();
+//        tool.generateASTLeaves();
+        tool.mergeIdent();
     }
 }

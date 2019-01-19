@@ -3,6 +3,7 @@ package clonedetection;
 import com.paypal.digraph.parser.GraphEdge;
 import com.paypal.digraph.parser.GraphNode;
 import com.paypal.digraph.parser.GraphParser;
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.neo4j.cypher.internal.compiler.v2_0.functions.Str;
@@ -10,6 +11,7 @@ import org.neo4j.cypher.internal.compiler.v2_0.functions.Str;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -79,8 +81,8 @@ public class AST {
                 if (isLeaf(x)) {
                     JSONObject jsonObject = getASTNode(x.node.getAttribute("label").toString());
                     try {
-                        System.out.print(jsonObject.getString("code") + " ");
-                    } catch (JSONException e) {
+                        FileUtils.write(output, jsonObject.getString("code") + " ","utf-8", true);
+                    } catch (JSONException | IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -127,12 +129,13 @@ public class AST {
                 String label = node.getAttribute("label").toString();
                 JSONObject item = getASTNode(label);
 
-                if (item.getString("type").equals("FunctionDef")) {
+                if (item.toString().contains("FunctionDef") && item.getString("type").equals("FunctionDef")) {
                     rootNode = node;
                 }
             }
         } catch (FileNotFoundException | JSONException e) {
             e.printStackTrace();
+            System.exit(1);
         }
         return rootNode;
     }
@@ -157,7 +160,8 @@ public class AST {
 
     public static void main(String[] args) {
         AST ast = new AST();
-        TreeNode root = ast.generateASTTree(new File("/home/cary/Documents/Data/CloneData/ast/40/9/4098865.dot"));
-        ast.midTraverse(root, new File(""));
+        TreeNode root = ast.generateASTTree(new File("/home/cary/Documents/Data/CloneData/ast/80/1376/10398065.dot"));
+        System.out.println("generate success");
+        ast.midTraverse(root, new File("/home/cary/Documents/Data/CloneData/ident/80/1376/10398065.dot"));
     }
 }

@@ -7,13 +7,12 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.omg.SendingContext.RunTime;
+import org.neo4j.cypher.internal.compiler.v2_0.functions.Str;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 
@@ -140,15 +139,16 @@ public class Tool {
         }
     }
 
-    void processFDG() {
+    //删除未使用的数据
+    void deleteUselessData() {
         Set<String> set = new HashSet<>();
-        File[] files = new File(Config.basePath + "dot").listFiles();
+        File[] files = new File(Config.basePath + "cfg").listFiles();
 
         for (File file : files) {
             set.add(file.getName());
         }
 
-        File[] file2s = new File(Config.basePath + "FDG").listFiles();
+        File[] file2s = new File(Config.basePath + "ast").listFiles();
 
         for (File file2 : file2s) {
             if (!set.contains(file2.getName())) {
@@ -763,7 +763,7 @@ public class Tool {
         }
     }
 
-    void generateAST() {
+    void generateASTFile() {
         File funcFile = new File(Config.basePath.concat("func.txt"));
         try {
             List<String> lines = FileUtils.readLines(funcFile, "utf-8");
@@ -811,6 +811,75 @@ public class Tool {
             e.printStackTrace();
         }
     }
+
+    void generateASTLeaves() {
+        AST ast = new AST();
+        String astPath = Config.basePath.concat("ast");
+        List<List<File>> astFolders = getFile(astPath);
+        int cnt = 0;
+        for (List<File> astFolder : astFolders) {
+            for (File astFiles : astFolder) {
+
+                String folderName = getLastTwo(astFiles.getAbsolutePath());
+                File[] files = astFiles.listFiles();
+                File identFolder = new File(Config.basePath.concat("ident").concat(File.separator.concat(folderName)));
+                if (!identFolder.exists()) {
+                    identFolder.mkdirs();
+                }
+                // /home/cary/Documents/Data/CloneData/ast/80/331/10453218.dot
+                for (File file : files) {
+                    File identFile = new File(identFolder.getAbsolutePath().concat(File.separator.concat(file.getName().substring(0, file.getName().indexOf(".")).concat(".src"))));
+                    if (identFile.exists()) {
+                        cnt++;
+                        continue;
+                    }
+
+                    AST.TreeNode root = ast.generateASTTree(file);
+                    ast.midTraverse(root, identFile);
+                    System.out.println(cnt++ + "," + file.getAbsolutePath());
+                }
+            }
+        }
+    }
+
+    //生成函数id与本地路径的映射
+    void generateLocalFuncList() {
+        String path = Config.basePath.concat("ast");
+        File localFunc = new File(Config.basePath.concat("localFunc.txt"));
+        getFile(path).forEach(x -> x.forEach(y -> {
+            File[] files = y.listFiles();
+            for (File file : files) {
+                try {
+                    FileUtils.write(localFunc, file.getName().substring(0, file.getName().indexOf(".")) + "\t"
+                            , "utf-8", true);
+                    FileUtils.write(localFunc, file.getAbsolutePath() + "\n", "utf-8", true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }));
+    }
+
+    //合并所有由函数AST的叶子节点生成的标识符表示成一个src文件，交给AutoenCODE
+    void mergeIdent() {
+        File src = new File(Config.basePath.concat("corpus.src"));
+        List<String> data = new ArrayList<>();
+        try {
+            List<String> localFuncs = FileUtils.readLines(new File(Config.basePath.concat("localFunc.txt")));
+            localFuncs.forEach(localFunc -> {
+                try {
+                    String content = FileUtils.readFileToString(new File(localFunc.split("\t")[1]), "utf-8");
+                    data.add(content);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            FileUtils.writeLines(src, data, "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     String getFolderNameFromSrcPath(String p) {
         String[] tmp = p.split("/");
