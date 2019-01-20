@@ -3,14 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="d9b53b5f-6067-4387-9f94-22e8aac212a7" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/clonedetection/AST.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clonedetection/AST.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/clonedetection/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clonedetection/Config.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/clonedetection/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clonedetection/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/clonedetection/Tool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clonedetection/Tool.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/AST$TreeNode.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/clonedetection/AST$TreeNode.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/AST.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/clonedetection/AST.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/Config.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/clonedetection/Config.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/clonedetection/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/Tool$Edge.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/clonedetection/Tool$Edge.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/Tool.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/clonedetection/Tool.class" afterDir="false" />
     </list>
@@ -24,23 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/AST.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2448">
-              <caret line="158" column="5" selection-start-line="158" selection-start-column="5" selection-end-line="158" selection-end-column="5" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Tool.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="65">
-              <caret line="862" column="30" selection-start-line="862" selection-start-column="30" selection-end-line="862" selection-end-column="30" />
+            <state relative-caret-position="259">
+              <caret line="906" column="12" selection-start-line="906" selection-start-column="12" selection-end-line="906" selection-end-column="12" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -48,11 +30,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Main.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="272">
-              <caret line="16" column="5" lean-forward="true" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="5" />
+              <caret line="16" column="29" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -68,7 +50,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>check ( k , n , a )</find>
       <find>k - a [ i ]</find>
       <find>Error</find>
       <find>key=</find>
@@ -97,6 +78,8 @@
       <find>de</find>
       <find>delete</find>
       <find>type</find>
+      <find>local</find>
+      <find>feature.txt</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -113,8 +96,8 @@
         <option value="$PROJECT_DIR$/src/main/java/AST.java" />
         <option value="$PROJECT_DIR$/src/main/java/clonedetection/Config.java" />
         <option value="$PROJECT_DIR$/src/main/java/clonedetection/AST.java" />
-        <option value="$PROJECT_DIR$/src/main/java/clonedetection/Tool.java" />
         <option value="$PROJECT_DIR$/src/main/java/clonedetection/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/clonedetection/Tool.java" />
       </list>
     </option>
   </component>
@@ -199,7 +182,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1547801967152" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1547964069816" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
@@ -303,12 +286,14 @@
       <workItem from="1547728869976" duration="5805000" />
       <workItem from="1547779440684" duration="12672000" />
       <workItem from="1547860950666" duration="662000" />
-      <workItem from="1547873032876" duration="2154000" />
+      <workItem from="1547873032876" duration="5176000" />
+      <workItem from="1547890092033" duration="2338000" />
+      <workItem from="1547952079409" duration="10145000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="101151000" />
+    <option name="totallyTimeSpent" value="116656000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -321,9 +306,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="51" y="27" width="1869" height="1053" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.109280616" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11147721" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -332,7 +316,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.4514722" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49972543" weight="0.3740458" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3991276" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -340,8 +324,8 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.3456925" />
-      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.34460196" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5002746" side_tool="true" weight="0.4514722" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.45692477" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -495,20 +479,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Tool.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/org/lucee/commons-io/2.4.0/commons-io-2.4.0.jar!/org/apache/commons/io/FileUtils.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="65">
-          <caret line="862" column="30" selection-start-line="862" selection-start-column="30" selection-end-line="862" selection-end-column="30" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="238">
+          <caret line="64" column="32" lean-forward="true" selection-start-line="64" selection-start-column="32" selection-end-line="64" selection-end-column="32" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
-          <caret line="16" column="5" lean-forward="true" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="5" />
+          <caret line="16" column="29" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Tool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="906" column="12" selection-start-line="906" selection-start-column="12" selection-end-line="906" selection-end-column="12" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

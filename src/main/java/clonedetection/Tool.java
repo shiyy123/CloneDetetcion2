@@ -868,7 +868,14 @@ public class Tool {
             List<String> localFuncs = FileUtils.readLines(new File(Config.basePath.concat("localFunc.txt")));
             localFuncs.forEach(localFunc -> {
                 try {
-                    String content = FileUtils.readFileToString(new File(localFunc.split("\t")[1]), "utf-8");
+                    String content = FileUtils.readFileToString(new File(localFunc.split("\t")[1].
+                            replace("ast", "ident").replace("dot", "src")), "utf-8");
+                    while (content.startsWith(" ")) {
+                        content = content.substring(1);
+                    }
+                    while (content.endsWith(" ")) {
+                        content = content.substring(0, content.length() - 2);
+                    }
                     data.add(content);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -880,12 +887,173 @@ public class Tool {
         }
     }
 
+    String getFolder(String s) {
+        String[] tmp = s.split("/");
+        int len = tmp.length;
+        return tmp[len - 3].concat(File.separator.concat(tmp[len - 2]));
+    }
+
+    void generateword2vecFuncEmbedding() {
+        try {
+            List<String> localFuncs = FileUtils.readLines(new File(Config.basePath.concat("localFunc.txt")));
+            List<String> funcEmbed = FileUtils.readLines(new File(Config.basePath.concat("word2vec").concat(File.separator.concat("funcEmbed.txt"))));
+            for (int i = 0; i < localFuncs.size(); i++) {
+                String path = localFuncs.get(i).split("\t")[1];
+                String folder = getFolder(path);
+                String funcId = localFuncs.get(i).split("\t")[0];
+                String embed = funcEmbed.get(i);
+                embed = embed.substring(0, embed.length() - 2);
+                File file = new File(Config.basePath.concat("embedding_func_word2vec".concat(File.separator).concat(folder.concat(File.separator.concat(funcId.concat(".embedding"))))));
+                FileUtils.write(file, embed, "utf-8");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     String getFolderNameFromSrcPath(String p) {
         String[] tmp = p.split("/");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(tmp[tmp.length - 2]).append(File.separator).append(tmp[tmp.length - 1], 0, tmp[tmp.length - 1].indexOf("."));
         return stringBuilder.toString();
+    }
+
+//    void word2vecFuncEmbed() {
+//        String path = Config.basePath.concat("word2vec");
+//        String corpus = path.concat(File.separator.concat("corpus.int"));
+//        String wordEmbed = path.concat(File.separator.concat("embed.txt"));
+//        String funcEmbed = path.concat(File.separator.concat("funcEmbed.txt"));
+//        try {
+//            List<String> funcs = FileUtils.readLines(new File(corpus), "utf-8");
+//            List<String> wordEmbeds = FileUtils.readLines(new File(wordEmbed), "utf-8");
+//            //遍历每一个func，也就是每一行
+//            List<String> ls = new ArrayList<>();
+//            for (int i = 0; i < funcs.size(); i++) {
+//                String[] words = funcs.get(i).split(" ");
+//
+//                //list的长度为word2vec设定的长度
+//                List<List<Double>> indentEmbed = new ArrayList<>();
+//                //遍历一行中的每一个标识符，将其embedding结果加起来取平均
+//                for (int j = 0; j < words.length; j++) {
+//                    //存着一个标识符的Embedding
+//                    List<Double> funcEmbedList = new ArrayList<>();
+//                    int wordId = Integer.parseInt(words[j]);
+//                    String s = wordEmbeds.get(wordId - 1);
+//                    String[] ss = s.split(" ");
+//                    for (String tmp : ss) {
+//                        funcEmbedList.add(Double.parseDouble(tmp));
+//                    }
+//                    indentEmbed.add(funcEmbedList);
+//                }
+//
+//                List<Double> res = indentEmbed.get(0);
+//                for (int j = 1; j < indentEmbed.size(); j++) {
+//                    for (int k = 0; k < res.size(); k++) {
+//                        res.set(k, res.get(k) + indentEmbed.get(j).get(k));
+//                    }
+//                }
+//                for (int j = 0; j < res.size(); j++) {
+//                    res.set(j, res.get(j) / indentEmbed.size());
+//                }
+//                StringBuilder sb = new StringBuilder();
+//                for (Double d : res) {
+//                    sb.append(d).append(" ");
+//                }
+//                ls.add(sb.toString());
+//            }
+//            FileUtils.writeLines(new File(funcEmbed), ls, "\n");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    void calculateFeatureNum() {
+        List<List<File>> featureList = getFile(Config.basePath.concat("feature"));
+        featureList.forEach(x -> {
+            x.forEach(y -> {
+                File feature = new File(y.getAbsolutePath().concat(File.separator.concat("feature.txt")));
+                try {
+                    if (FileUtils.readLines(feature, "utf-8").size() > 1) {
+                        System.out.println(feature.getAbsolutePath());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+    }
+
+    void deleteUseless(String folderName) {
+        try {
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("ast").concat(File.separator.concat(folderName))));
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("call").concat(File.separator.concat(folderName))));
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("embedding_feature_HOPE").concat(File.separator.concat(folderName))));
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("embedding_func_HOPE").concat(File.separator.concat(folderName))));
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("FDG").concat(File.separator.concat(folderName))));
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("feature").concat(File.separator.concat(folderName))));
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("feature_edge").concat(File.separator.concat(folderName))));
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("func").concat(File.separator.concat(folderName))));
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("func_edge").concat(File.separator.concat(folderName))));
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("ident").concat(File.separator.concat(folderName))));
+            FileUtils.deleteDirectory(new File(Config.basePath.concat("src").concat(File.separator.concat(folderName))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void getword2vecFeatureEmbedding() {
+        try {
+            Map<String, String> funcid2LineNum = new HashMap<>();
+            List<String> localFuncs = FileUtils.readLines(new File(Config.basePath.concat("localFunc.txt")));
+            for (int i = 0; i < localFuncs.size(); i++) {
+                funcid2LineNum.put(localFuncs.get(i).split("\t")[0], i + "");
+            }
+
+            List<String> funcEmbed = FileUtils.readLines(new File(Config.basePath.concat("word2vec").concat(File.separator.concat("funcEmbed.txt"))));
+            List<List<File>> featureFolders = getFile(Config.basePath.concat("feature"));
+            featureFolders.forEach(x -> {
+                x.forEach(y -> {
+                    String folderName = getLastTwo(y.getAbsolutePath());
+                    File featureEmbedding = new File(Config.basePath.concat("embedding_feature_word2vec".concat(File.separator.concat(folderName.concat(File.separator.concat("0.embedding"))))));
+                    //一个文件中只有一个功能，即文件中的所有函数是有关联的
+                    File feature = new File(y.getAbsolutePath().concat(File.separator.concat("feature.txt")));
+                    try {
+                        String featureFuncs = FileUtils.readFileToString(feature, "utf-8");
+                        featureFuncs = featureFuncs.substring(featureFuncs.indexOf("[") + 1, featureFuncs.indexOf("]")).replace(" ", "");
+                        String[] ss = featureFuncs.split(",");
+                        List<Double> res = new ArrayList<>();
+                        List<List<Double>> tmp = new ArrayList<>();
+                        for (String s : ss) {
+                            String[] values = funcEmbed.get(Integer.parseInt(funcid2LineNum.get(s))).split(" ");
+                            List<Double> valueList = new ArrayList<>();
+                            for (String val : values) {
+                                valueList.add(Double.parseDouble(val));
+                            }
+                            tmp.add(valueList);
+                        }
+                        res = tmp.get(0);
+                        for (int i = 1; i < tmp.size(); i++) {
+                            for (int j = 0; j < res.size(); j++) {
+                                res.set(j, tmp.get(i).get(j) + res.get(j));
+                            }
+                        }
+                        for (int j = 0; j < res.size(); j++) {
+                            res.set(j, res.get(j) / tmp.size());
+                        }
+                        StringBuilder sb = new StringBuilder();
+                        for (Double d : res) {
+                            sb.append(d.toString()).append(" ");
+                        }
+                        FileUtils.write(featureEmbedding, sb.toString().substring(0, sb.toString().length() - 2), "utf-8");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     class Edge {

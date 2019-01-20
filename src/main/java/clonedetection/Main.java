@@ -13,6 +13,7 @@ public class Main {
     public static void main(String[] args) {
         Tool tool = new Tool();
 //        tool.generateASTLeaves();
-        tool.mergeIdent();
+//        tool.calculateFeatureNum();
+        tool.generateword2vecFuncEmbedding();
     }
 }
