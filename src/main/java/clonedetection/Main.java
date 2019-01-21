@@ -8,12 +8,14 @@ public class Main {
 
     /**
      * 80/1376
+     *
      * @param args
      */
     public static void main(String[] args) {
         Tool tool = new Tool();
 //        tool.generateASTLeaves();
 //        tool.calculateFeatureNum();
-        tool.generateword2vecFuncEmbedding();
+//        tool.testIdentDistance("1", "2");
+        tool.printDistance();
     }
 }

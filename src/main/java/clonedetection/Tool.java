@@ -7,7 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.neo4j.cypher.internal.compiler.v2_0.functions.Str;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -1056,6 +1055,78 @@ public class Tool {
         }
     }
 
+    //将功能级别的结果和函数级别的结果融合，
+    //如果有功能级别的结果则使用，
+    //如果没有则使用函数级别结果
+//    void generateCFGEmbed() {
+//        String cfgEmbedPath = Config.basePath.concat("cfgEmbed");
+//        List<List<File>> cfgFeature = getFile(Config.basePath.concat("embedding_feature_HOPE"));
+//        Set<String> folders = new HashSet<>();
+//        for (List<File> x : cfgFeature) {
+//            for (File y : x) {
+//                folders.add(getLastTwo(y.getAbsolutePath()));
+//            }
+//        }
+//        List<List<File>> cfgFunc = getFile(Config.basePath.concat("embedding_func_HOPE"));
+//        for (List<File> x : cfgFunc) {
+//            for (File y : x) {
+//                String folderName = getLastTwo(y.getAbsolutePath());
+//                //到feature中找
+//                if(folders.contains(folderName)){
+//                    try {
+//                        FileUtils.copyFile(new File(Config.basePath.concat("embedding_feature_HOPE").concat(File.separator.concat(folderName).concat(File.separator).concat("0.embedding"))),
+//                                new File(cfgEmbedPath.concat(File.separator.concat(folderName.concat(File.separator).concat("0.embedding")))));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    //到func中找
+//                    try {
+//                        System.out.println(y.getAbsolutePath());
+//                        File embed = Objects.requireNonNull(y.listFiles())[0];
+//                        FileUtils.copyFile(embed, new File(cfgEmbedPath.concat(File.separator.concat(folderName.concat(File.separator.concat("0.embedding"))))));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    void generateIdentEmbed() {
+        String identEmbedPath = Config.basePath.concat("identEmbed");
+        List<List<File>> identFeature = getFile(Config.basePath.concat("embedding_feature_word2vec"));
+        Set<String> folders = new HashSet<>();
+        for (List<File> x : identFeature) {
+            for (File y : x) {
+                folders.add(getLastTwo(y.getAbsolutePath()));
+            }
+        }
+        List<List<File>> identFunc = getFile(Config.basePath.concat("embedding_func_word2vec"));
+        for (List<File> x : identFunc) {
+            for (File y : x) {
+                String folderName = getLastTwo(y.getAbsolutePath());
+                if (folders.contains(folderName)) {
+                    try {
+                        FileUtils.copyFile(new File(Config.basePath.concat("embedding_feature_word2vec").concat(File.separator.concat(folderName).concat(File.separator).concat("0.embedding"))),
+                                new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator).concat("0.embedding")))));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    //到func中找
+                    try {
+                        System.out.println(y.getAbsolutePath());
+                        File embed = Objects.requireNonNull(y.listFiles())[0];
+                        FileUtils.copyFile(embed, new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator.concat("0.embedding"))))));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
     class Edge {
         Edge(String start, String end) {
             this.start = start;
@@ -1068,6 +1139,128 @@ public class Tool {
         @Override
         public String toString() {
             return start + " " + end;
+        }
+    }
+
+    List<Double> getVecFromCFG(File file) {
+        List<Double> res = new ArrayList<>();
+        try {
+            List<String> stringList = FileUtils.readLines(file, "utf-8");
+            String s = stringList.get(0);
+            s = s.substring(s.indexOf("[") + 1, s.indexOf("]"));
+            String[] ss = s.split(" ");
+            for (String tmp : ss) {
+                if (!tmp.isEmpty() && !tmp.contains(" ")) {
+                    res.add(Double.parseDouble(tmp));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (res.size() != 4) {
+            System.exit(1);
+        }
+        return res;
+    }
+
+    //计算两个向量间的距离
+    double calculateDistance(List<Double> l1, List<Double> l2) {
+        double res = 0;
+        if (l1.size() != l2.size()) {
+            System.err.println("计算距离的两个向量长度不等");
+            System.exit(1);
+        }
+        for (int i = 0; i < l1.size(); i++) {
+            res += ((l1.get(i) - l2.get(i)) * (l1.get(i) - l2.get(i)));
+        }
+        return Math.sqrt(res);
+    }
+
+    /**
+     * 使用1和2来进行测试实验，以1为主
+     */
+    void testCFGDistance(String folder1, String folder2) {
+        String path1 = Config.basePath.concat("cfgEmbed").concat(File.separator).concat(folder1);
+        String path2 = Config.basePath.concat("cfgEmbed").concat(File.separator).concat(folder2);
+        String cfgDistance = Config.basePath.concat("CFGDistance").concat(File.separator).concat(folder1);
+        for (File file : new File(path1).listFiles()) {
+            List<Double> values = getVecFromCFG(new File(file.getAbsolutePath().concat(File.separator).concat("0.embedding")));
+            File distanceFile = new File(cfgDistance.concat(File.separator).concat(file.getName()).concat(File.separator).concat("distance.txt"));
+
+            goThroughCFG(path1, values, distanceFile);
+            goThroughCFG(path2, values, distanceFile);
+        }
+    }
+
+    /**
+     * @param path2        进行遍历的所有文件
+     * @param values       当前计算距离的函数的值
+     * @param distanceFile 计算结果写入（追加）的文件
+     */
+    private void goThroughCFG(String path2, List<Double> values, File distanceFile) {
+        for (File file2 : new File(path2).listFiles()) {
+            List<Double> values2 = getVecFromCFG(new File(file2.getAbsolutePath().concat(File.separator).concat("0.embedding")));
+            writeDistance(values, distanceFile, file2, values2);
+        }
+    }
+
+    private void writeDistance(List<Double> values, File distanceFile, File file2, List<Double> values2) {
+        double distance = calculateDistance(values, values2);
+        try {
+            FileUtils.write(distanceFile, file2.getAbsolutePath() + "\t" + distance + "\n", "utf-8", true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    List<Double> getVecFromIdent(File file) {
+        List<Double> res = new ArrayList<>();
+        try {
+            String s = FileUtils.readFileToString(file, "utf-8");
+            String[] ss = s.split(" ");
+            for (String s1 : ss) {
+                res.add(Double.parseDouble(s1));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    void testIdentDistance(String folder1, String folder2) {
+        String path1 = Config.basePath.concat("identEmbed").concat(File.separator).concat(folder1);
+        String path2 = Config.basePath.concat("identEmbed").concat(File.separator).concat(folder2);
+        String identDistance = Config.basePath.concat("identDistance").concat(File.separator).concat(folder1);
+        for (File file : new File(path1).listFiles()) {
+            List<Double> values = getVecFromIdent(new File(file.getAbsolutePath().concat(File.separator).concat("0.embedding")));
+            File distanceFile = new File(identDistance.concat(File.separator).concat(file.getName()).concat(File.separator).concat("distance.txt"));
+
+            goThroughIdent(path1, values, distanceFile);
+
+            goThroughIdent(path2, values, distanceFile);
+        }
+    }
+
+    private void goThroughIdent(String path1, List<Double> values, File distanceFile) {
+        for (File file2 : new File(path1).listFiles()) {
+            List<Double> values2 = getVecFromIdent(new File(file2.getAbsolutePath().concat(File.separator).concat("0.embedding")));
+            writeDistance(values, distanceFile, file2, values2);
+        }
+    }
+
+    void printDistance() {
+        File file = new File("/home/cary/Documents/Data/CloneData/CFGDistance/1/17/distance.txt");
+        File out = new File(Config.basePath.concat("distance.txt"));
+        if (out.exists()) {
+            out.delete();
+        }
+        try {
+            List<String> list = FileUtils.readLines(file, "utf-8");
+            for (String s : list) {
+                FileUtils.write(out, s.split("\t")[1] + " ", "utf-8", true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
