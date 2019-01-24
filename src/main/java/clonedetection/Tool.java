@@ -833,7 +833,7 @@ public class Tool {
                         continue;
                     }
 
-                    AST.TreeNode root = ast.generateASTTree(file);
+                    TreeNode root = ast.generateASTTree(file);
                     ast.midTraverse(root, identFile);
                     System.out.println(cnt++ + "," + file.getAbsolutePath());
                 }
@@ -1261,6 +1261,41 @@ public class Tool {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    void calculateNode2vecEmbedding() {
+        List<List<File>> featureEdgeFolders = getFile(Config.basePath.concat("func_edge"));
+        for (List<File> featureEdgeFiles : featureEdgeFolders) {
+            for (File featureEdgeFile : featureEdgeFiles) {
+                String folderName = getLastTwo(featureEdgeFile.getAbsolutePath());
+
+                File outDir = new File(Config.basePath.concat("embedding_func_node2vec").concat(File.separator).concat(folderName));
+                if (!outDir.exists()) {
+                    outDir.mkdirs();
+                }
+
+                File[] files = featureEdgeFile.listFiles();
+                for (File file : files) {
+                    File out = new File(outDir.getAbsolutePath().concat(File.separator).concat(file.getName().substring(0, file.getName().indexOf(".")).concat(".emd")));
+
+//                    String cmd = "python2 /home/cary/Documents/Code/node2vec/src/main.py --directed --input " +
+//                            featureEdgeFile.getAbsolutePath().concat(File.separator).concat(file.getName()) + " --output " + out.getAbsolutePath();
+
+                    String cmd = "python2 /home/cary/software/node2vec/src/main.py --directed --input " +
+                            featureEdgeFile.getAbsolutePath().concat(File.separator).concat(file.getName()) + " --output " + out.getAbsolutePath();
+
+                    try {
+                        Process process = Runtime.getRuntime().exec(cmd);
+                        CodeRepresentation.processMessage(process.getInputStream(), true);
+                        CodeRepresentation.processMessage(process.getErrorStream(), true);
+                        process.waitFor();
+
+                    } catch (IOException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     }
 

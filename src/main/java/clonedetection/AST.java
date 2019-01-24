@@ -6,7 +6,6 @@ import com.paypal.digraph.parser.GraphParser;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.neo4j.cypher.internal.compiler.v2_0.functions.Str;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,11 +19,6 @@ import java.util.*;
  */
 
 public class AST {
-    class TreeNode {
-        List<TreeNode> children;
-        GraphNode node;
-    }
-
     /**
      * format:
      * childNum:0
