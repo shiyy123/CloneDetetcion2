@@ -18,6 +18,10 @@ public class Main {
 //        feature.generateGraphFromCallFile(new File("/home/cary/Documents/Data/CloneData/call/1/13/call.txt"));
 
         Tool tool = new Tool();
-        tool.calculateNode2vecEmbedding();
+//        tool.testCFGDistance("3", "13");
+//        tool.testNode2VecDistance("3", "13");
+//        tool.testIdentDistance("3", "13");
+//        tool.printDistance("/home/cary/Documents/Data/CloneData/identDistance/3/18/distance.txt");
+        tool.generateFeatureEdge();
     }
 }

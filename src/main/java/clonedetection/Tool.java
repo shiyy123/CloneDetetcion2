@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.neo4j.cypher.internal.compiler.v2_0.functions.Str;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -573,7 +574,7 @@ public class Tool {
         return res;
     }
 
-    //TODO 根据call文件中的函数调用关系
+    // 根据call文件中的函数调用关系
     // 对于自身调用自身的特殊情况，增加一条指向Entry的边
     // 对于调用其他函数的情况，寻找所有指向该语句的statementId和该语句指向的statementId
     // 将其他函数的Entry和Exit的id替换上去，即可
@@ -628,19 +629,21 @@ public class Tool {
                     for (int i = 0; i < featureCallJsonArray.length(); i++) {
                         try {
                             JSONObject callJsonObject = featureCallJsonArray.getJSONObject(i);
+
                             String callFuncId = callJsonObject.getString("callFuncId");
                             String beCalledFuncId = callJsonObject.getString("beCalledFuncId");
                             String callStatementId = callJsonObject.getString("callStatementId");
 
                             // 包含功能中所有函数的CFG（语句id->语句id）
-                            File beCalledDotFile = getSpecifyFile(folderName, "dot", beCalledFuncId.concat(".dot"));
+                            File beCalledDotFile = getSpecifyFile(folderName, "cfg", beCalledFuncId.concat(".dot"));
+                            File callDotFile = getSpecifyFile(folderName, "cfg", callFuncId.concat(".dot"));
 
 //                            featureFuncEdgesFileList.forEach(edge -> {
 //                                System.out.println(edge.start + "," + edge.end);
 //                            });
 //                            System.out.println();
 
-                            modifyFuncEdge2FeatureEdge(callStatementId, featureFuncEdgesFileList, beCalledDotFile);
+                            modifyFuncEdge2FeatureEdge(callStatementId, featureFuncEdgesFileList, beCalledDotFile, callDotFile);
 
 //                            featureFuncEdgesFileList.forEach(edge -> {
 //
@@ -670,16 +673,21 @@ public class Tool {
         });
     }
 
-    void modifyFuncEdge2FeatureEdge(String statementId, List<Edge> featureFuncEdgesFileList, File beCalledDotFile) {
-        String entryId = getEntryId(beCalledDotFile);
-        String exitId = getExitId(beCalledDotFile);
+    void modifyFuncEdge2FeatureEdge(String statementId, List<Edge> featureFuncEdgesFileList, File beCalledDotFile, File callDotFile) {
+        if (callDotFile.getAbsolutePath().equals(beCalledDotFile.getAbsolutePath())) {
+            String entryId = getEntryId(beCalledDotFile);
+            featureFuncEdgesFileList.add(new Edge(statementId, entryId));
+        } else {
+            String entryId = getEntryId(beCalledDotFile);
+            String exitId = getExitId(beCalledDotFile);
 
-        for (Edge edge : featureFuncEdgesFileList) {
-            if (edge.start.equals(statementId)) {
-                edge.start = exitId;
-            }
-            if (edge.end.equals(statementId)) {
-                edge.end = entryId;
+            for (Edge edge : featureFuncEdgesFileList) {
+                if (edge.start.equals(statementId)) {
+                    edge.start = exitId;
+                }
+                if (edge.end.equals(statementId)) {
+                    edge.end = entryId;
+                }
             }
         }
     }
@@ -1093,23 +1101,59 @@ public class Tool {
 //        }
 //    }
 
-    void generateIdentEmbed() {
-        String identEmbedPath = Config.basePath.concat("identEmbed");
-        List<List<File>> identFeature = getFile(Config.basePath.concat("embedding_feature_word2vec"));
+//    void generateIdentEmbed() {
+//        String identEmbedPath = Config.basePath.concat("identEmbed");
+//        List<List<File>> identFeature = getFile(Config.basePath.concat("embedding_feature_word2vec"));
+//        Set<String> folders = new HashSet<>();
+//        for (List<File> x : identFeature) {
+//            for (File y : x) {
+//                folders.add(getLastTwo(y.getAbsolutePath()));
+//            }
+//        }
+//        List<List<File>> identFunc = getFile(Config.basePath.concat("embedding_func_word2vec"));
+//        for (List<File> x : identFunc) {
+//            for (File y : x) {
+//                String folderName = getLastTwo(y.getAbsolutePath());
+//                if (folders.contains(folderName)) {
+//                    try {
+//                        FileUtils.copyFile(new File(Config.basePath.concat("embedding_feature_word2vec").concat(File.separator.concat(folderName).concat(File.separator).concat("0.embedding"))),
+//                                new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator).concat("0.embedding")))));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    //到func中找
+//                    try {
+//                        System.out.println(y.getAbsolutePath());
+//                        File embed = Objects.requireNonNull(y.listFiles())[0];
+//                        FileUtils.copyFile(embed, new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator.concat("0.embedding"))))));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    //生成feature的node2vec Embedding结果
+    void generateNode2VecEmbed() {
+        String identEmbedPath = Config.basePath.concat("node2vecEmbed");
+        List<List<File>> identFeature = getFile(Config.basePath.concat("embedding_feature_node2vec"));
+
         Set<String> folders = new HashSet<>();
         for (List<File> x : identFeature) {
             for (File y : x) {
                 folders.add(getLastTwo(y.getAbsolutePath()));
             }
         }
-        List<List<File>> identFunc = getFile(Config.basePath.concat("embedding_func_word2vec"));
+        List<List<File>> identFunc = getFile(Config.basePath.concat("embedding_func_node2vec"));
         for (List<File> x : identFunc) {
             for (File y : x) {
                 String folderName = getLastTwo(y.getAbsolutePath());
                 if (folders.contains(folderName)) {
                     try {
-                        FileUtils.copyFile(new File(Config.basePath.concat("embedding_feature_word2vec").concat(File.separator.concat(folderName).concat(File.separator).concat("0.embedding"))),
-                                new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator).concat("0.embedding")))));
+                        FileUtils.copyFile(new File(Config.basePath.concat("embedding_feature_node2vec").concat(File.separator.concat(folderName).concat(File.separator).concat("0.emd"))),
+                                new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator).concat("0.emd")))));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -1118,7 +1162,7 @@ public class Tool {
                     try {
                         System.out.println(y.getAbsolutePath());
                         File embed = Objects.requireNonNull(y.listFiles())[0];
-                        FileUtils.copyFile(embed, new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator.concat("0.embedding"))))));
+                        FileUtils.copyFile(embed, new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator.concat("0.emd"))))));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -1127,20 +1171,6 @@ public class Tool {
         }
     }
 
-    class Edge {
-        Edge(String start, String end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        String start;
-        String end;
-
-        @Override
-        public String toString() {
-            return start + " " + end;
-        }
-    }
 
     List<Double> getVecFromCFG(File file) {
         List<Double> res = new ArrayList<>();
@@ -1159,6 +1189,35 @@ public class Tool {
         }
         if (res.size() != 4) {
             System.exit(1);
+        }
+        return res;
+    }
+
+    //从node2vec的文件中获取向量
+    List<Double> getVecFromNode2vec(File file) {
+        List<Double> res = new ArrayList<>();
+        List<List<Double>> data = new ArrayList<>();
+        try {
+            List<String> stringList = FileUtils.readLines(file, "utf-8");
+            for (int i = 1; i < stringList.size(); i++) {
+                String[] tmps = stringList.get(i).split(" ");
+                List<Double> single = new ArrayList<>();
+                for (int j = 1; j < tmps.length; j++) {
+                    single.add(Double.parseDouble(tmps[j]));
+                }
+                data.add(single);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        res = data.get(0);
+        for (int i = 1; i < data.size(); i++) {
+            for (int j = 0; j < res.size(); j++) {
+                res.set(j, res.get(j) + data.get(i).get(j));
+            }
+        }
+        for (int i = 0; i < res.size(); i++) {
+            res.set(i, res.get(i) / res.size());
         }
         return res;
     }
@@ -1189,6 +1248,27 @@ public class Tool {
 
             goThroughCFG(path1, values, distanceFile);
             goThroughCFG(path2, values, distanceFile);
+        }
+    }
+
+    void testNode2VecDistance(String folder1, String folder2) {
+        String path1 = Config.basePath.concat("node2vecEmbed").concat(File.separator).concat(folder1);
+        String path2 = Config.basePath.concat("node2vecEmbed").concat(File.separator).concat(folder2);
+        String node2vecDistance = Config.basePath.concat("node2vecDistance").concat(File.separator).concat(folder1);
+        for (File file : new File(path1).listFiles()) {
+            List<Double> values = getVecFromNode2vec(new File(file.getAbsolutePath().concat(File.separator).concat("0.emd")));
+            File distanceFile = new File(node2vecDistance.concat(File.separator).concat(file.getName()).concat(File.separator).concat("distance.txt"));
+
+            goThroughNode2vec(path1, values, distanceFile);
+            goThroughNode2vec(path2, values, distanceFile);
+        }
+
+    }
+
+    private void goThroughNode2vec(String path2, List<Double> values, File distanceFile) {
+        for (File file2 : new File(path2).listFiles()) {
+            List<Double> values2 = getVecFromNode2vec(new File(file2.getAbsolutePath().concat(File.separator).concat("0.emd")));
+            writeDistance(values, distanceFile, file2, values2);
         }
     }
 
@@ -1248,8 +1328,10 @@ public class Tool {
         }
     }
 
-    void printDistance() {
-        File file = new File("/home/cary/Documents/Data/CloneData/CFGDistance/1/17/distance.txt");
+    void printDistance(String distancePath) {
+//        File file = new File("/home/cary/Documents/Data/CloneData/CFGDistance/3/1/distance.txt");
+
+        File file = new File(distancePath);
         File out = new File(Config.basePath.concat("distance.txt"));
         if (out.exists()) {
             out.delete();
@@ -1301,7 +1383,7 @@ public class Tool {
 
     public static void main(String[] args) {
         Tool tool = new Tool();
-        System.out.println(tool.getEntryId(new File("/home/cary/Documents/Data/CloneData/dot/1/13/11179.dot")));
+        tool.getVecFromNode2vec(new File("/home/cary/Documents/Data/CloneData/node2vecEmbed/1/13/0.emd")).forEach(System.out::println);
 
     }
 }
