@@ -909,9 +909,13 @@ public class Tool {
                 String folder = getFolder(path);
                 String funcId = localFuncs.get(i).split("\t")[0];
                 String embed = funcEmbed.get(i);
-                embed = embed.substring(0, embed.length() - 2);
                 File file = new File(Config.basePath.concat("embedding_func_word2vec".concat(File.separator).concat(folder.concat(File.separator.concat(funcId.concat(".embedding"))))));
                 FileUtils.write(file, embed, "utf-8");
+
+                String s = FileUtils.readFileToString(file, "utf-8");
+                if (s.endsWith("E-")) {
+                    System.exit(1);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -926,54 +930,58 @@ public class Tool {
         return stringBuilder.toString();
     }
 
-//    void word2vecFuncEmbed() {
-//        String path = Config.basePath.concat("word2vec");
-//        String corpus = path.concat(File.separator.concat("corpus.int"));
-//        String wordEmbed = path.concat(File.separator.concat("embed.txt"));
-//        String funcEmbed = path.concat(File.separator.concat("funcEmbed.txt"));
-//        try {
-//            List<String> funcs = FileUtils.readLines(new File(corpus), "utf-8");
-//            List<String> wordEmbeds = FileUtils.readLines(new File(wordEmbed), "utf-8");
-//            //遍历每一个func，也就是每一行
-//            List<String> ls = new ArrayList<>();
-//            for (int i = 0; i < funcs.size(); i++) {
-//                String[] words = funcs.get(i).split(" ");
-//
-//                //list的长度为word2vec设定的长度
-//                List<List<Double>> indentEmbed = new ArrayList<>();
-//                //遍历一行中的每一个标识符，将其embedding结果加起来取平均
-//                for (int j = 0; j < words.length; j++) {
-//                    //存着一个标识符的Embedding
-//                    List<Double> funcEmbedList = new ArrayList<>();
-//                    int wordId = Integer.parseInt(words[j]);
-//                    String s = wordEmbeds.get(wordId - 1);
-//                    String[] ss = s.split(" ");
-//                    for (String tmp : ss) {
-//                        funcEmbedList.add(Double.parseDouble(tmp));
-//                    }
-//                    indentEmbed.add(funcEmbedList);
-//                }
-//
-//                List<Double> res = indentEmbed.get(0);
-//                for (int j = 1; j < indentEmbed.size(); j++) {
-//                    for (int k = 0; k < res.size(); k++) {
-//                        res.set(k, res.get(k) + indentEmbed.get(j).get(k));
-//                    }
-//                }
-//                for (int j = 0; j < res.size(); j++) {
-//                    res.set(j, res.get(j) / indentEmbed.size());
-//                }
-//                StringBuilder sb = new StringBuilder();
-//                for (Double d : res) {
-//                    sb.append(d).append(" ");
-//                }
-//                ls.add(sb.toString());
-//            }
-//            FileUtils.writeLines(new File(funcEmbed), ls, "\n");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    void word2vecFuncEmbed() {
+        String path = Config.basePath.concat("word2vec");
+        String corpus = path.concat(File.separator.concat("corpus.int"));
+        String wordEmbed = path.concat(File.separator.concat("embed.txt"));
+        String funcEmbed = path.concat(File.separator.concat("funcEmbed.txt"));
+        try {
+            List<String> funcs = FileUtils.readLines(new File(corpus), "utf-8");
+            List<String> wordEmbeds = FileUtils.readLines(new File(wordEmbed), "utf-8");
+            //遍历每一个func，也就是每一行
+            List<String> ls = new ArrayList<>();
+            for (int i = 0; i < funcs.size(); i++) {
+                String[] words = funcs.get(i).split(" ");
+
+                //list的长度为word2vec设定的长度
+                List<List<Double>> indentEmbed = new ArrayList<>();
+                //遍历一行中的每一个标识符，将其embedding结果加起来取平均
+                for (int j = 0; j < words.length; j++) {
+                    //存着一个标识符的Embedding
+                    List<Double> funcEmbedList = new ArrayList<>();
+                    int wordId = Integer.parseInt(words[j]);
+                    String s = wordEmbeds.get(wordId - 1);
+                    String[] ss = s.split(" ");
+                    for (String tmp : ss) {
+                        funcEmbedList.add(Double.parseDouble(tmp));
+                    }
+                    indentEmbed.add(funcEmbedList);
+                }
+
+                List<Double> res = indentEmbed.get(0);
+                for (int j = 1; j < indentEmbed.size(); j++) {
+                    for (int k = 0; k < res.size(); k++) {
+                        res.set(k, res.get(k) + indentEmbed.get(j).get(k));
+                    }
+                }
+                for (int j = 0; j < res.size(); j++) {
+                    res.set(j, res.get(j) / indentEmbed.size());
+                }
+                StringBuilder sb = new StringBuilder();
+                for (Double d : res) {
+                    sb.append(d).append(" ");
+                }
+
+                if (sb.toString().endsWith("E-")) {
+                    System.exit(1);
+                }
+                ls.add(sb.toString().substring(0, sb.toString().length() - 1));
+            }
+            FileUtils.writeLines(new File(funcEmbed), ls, "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     void calculateFeatureNum() {
         List<List<File>> featureList = getFile(Config.basePath.concat("feature"));
@@ -1050,9 +1058,19 @@ public class Tool {
                         }
                         StringBuilder sb = new StringBuilder();
                         for (Double d : res) {
+                            if (d.toString().endsWith("E-")) {
+                                System.exit(1);
+                            }
                             sb.append(d.toString()).append(" ");
                         }
-                        FileUtils.write(featureEmbedding, sb.toString().substring(0, sb.toString().length() - 2), "utf-8");
+
+                        String t = sb.toString().substring(0, sb.toString().length() - 1);
+
+                        if (t.endsWith("E-")) {
+                            System.exit(1);
+                        }
+
+                        FileUtils.write(featureEmbedding, t, "utf-8");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -1101,39 +1119,39 @@ public class Tool {
 //        }
 //    }
 
-//    void generateIdentEmbed() {
-//        String identEmbedPath = Config.basePath.concat("identEmbed");
-//        List<List<File>> identFeature = getFile(Config.basePath.concat("embedding_feature_word2vec"));
-//        Set<String> folders = new HashSet<>();
-//        for (List<File> x : identFeature) {
-//            for (File y : x) {
-//                folders.add(getLastTwo(y.getAbsolutePath()));
-//            }
-//        }
-//        List<List<File>> identFunc = getFile(Config.basePath.concat("embedding_func_word2vec"));
-//        for (List<File> x : identFunc) {
-//            for (File y : x) {
-//                String folderName = getLastTwo(y.getAbsolutePath());
-//                if (folders.contains(folderName)) {
-//                    try {
-//                        FileUtils.copyFile(new File(Config.basePath.concat("embedding_feature_word2vec").concat(File.separator.concat(folderName).concat(File.separator).concat("0.embedding"))),
-//                                new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator).concat("0.embedding")))));
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    //到func中找
-//                    try {
-//                        System.out.println(y.getAbsolutePath());
-//                        File embed = Objects.requireNonNull(y.listFiles())[0];
-//                        FileUtils.copyFile(embed, new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator.concat("0.embedding"))))));
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//    }
+    void generateIdentEmbed() {
+        String identEmbedPath = Config.basePath.concat("identEmbed");
+        List<List<File>> identFeature = getFile(Config.basePath.concat("embedding_feature_word2vec"));
+        Set<String> folders = new HashSet<>();
+        for (List<File> x : identFeature) {
+            for (File y : x) {
+                folders.add(getLastTwo(y.getAbsolutePath()));
+            }
+        }
+        List<List<File>> identFunc = getFile(Config.basePath.concat("embedding_func_word2vec"));
+        for (List<File> x : identFunc) {
+            for (File y : x) {
+                String folderName = getLastTwo(y.getAbsolutePath());
+                if (folders.contains(folderName)) {
+                    try {
+                        FileUtils.copyFile(new File(Config.basePath.concat("embedding_feature_word2vec").concat(File.separator.concat(folderName).concat(File.separator).concat("0.embedding"))),
+                                new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator).concat("0.embedding")))));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    //到func中找
+                    try {
+                        System.out.println(y.getAbsolutePath());
+                        File embed = Objects.requireNonNull(y.listFiles())[0];
+                        FileUtils.copyFile(embed, new File(identEmbedPath.concat(File.separator.concat(folderName.concat(File.separator.concat("0.embedding"))))));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 
     //生成feature的node2vec Embedding结果
     void generateNode2VecEmbed() {
@@ -1297,6 +1315,7 @@ public class Tool {
         List<Double> res = new ArrayList<>();
         try {
             String s = FileUtils.readFileToString(file, "utf-8");
+            System.out.println(file.getAbsolutePath());
             String[] ss = s.split(" ");
             for (String s1 : ss) {
                 res.add(Double.parseDouble(s1));
@@ -1383,7 +1402,11 @@ public class Tool {
 
     public static void main(String[] args) {
         Tool tool = new Tool();
-        tool.getVecFromNode2vec(new File("/home/cary/Documents/Data/CloneData/node2vecEmbed/1/13/0.emd")).forEach(System.out::println);
+//        tool.getVecFromNode2vec(new File("/home/cary/Documents/Data/CloneData/node2vecEmbed/1/13/0.emd")).forEach(System.out::println);
 
+//        tool.word2vecFuncEmbed();
+//        tool.generateword2vecFuncEmbedding();
+//        tool.getword2vecFeatureEmbedding();
+        tool.generateIdentEmbed();
     }
 }
