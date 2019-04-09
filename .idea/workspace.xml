@@ -2,11 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d9b53b5f-6067-4387-9f94-22e8aac212a7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.attach_pid26324" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.attach_pid4791" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.attach_pid6515" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.attach_pid6936" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/clonedetection/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clonedetection/Test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/clonedetection/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clonedetection/GenerateData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/clonedetection/Tool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clonedetection/Tool.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/Test.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/clonedetection/Test.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/Test.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/Tool.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/clonedetection/Tool.class" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -19,11 +22,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Tool.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="423">
-              <caret line="1383" column="98" selection-start-line="1383" selection-start-column="98" selection-end-line="1383" selection-end-column="98" />
+            <state relative-caret-position="22253">
+              <caret line="1323" column="9" selection-start-line="1323" selection-start-column="9" selection-end-line="1323" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -32,10 +35,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/TreeNode.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/AST.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
+            <state relative-caret-position="2499">
+              <caret line="160" column="1" selection-start-line="160" selection-start-column="1" selection-end-line="160" selection-end-column="1" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -44,15 +47,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Test.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/CFG.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="757">
-              <caret line="485" column="1" lean-forward="true" selection-start-line="485" selection-start-column="1" selection-end-line="485" selection-end-column="1" />
+            <state relative-caret-position="1734">
+              <caret line="108" column="5" selection-start-line="108" selection-start-column="5" selection-end-line="108" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="method#mergeDifferentFiles#0;class#Test#0" />
-                <element signature="method#validationSourcererCCResult#0;class#Test#0" />
-                <element signature="method#getAllJavaFiles#0;class#Test#0" />
               </folding>
             </state>
           </provider>
@@ -62,7 +62,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Main.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="408">
-              <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
+              <caret line="24" column="35" selection-start-line="24" selection-start-column="35" selection-end-line="24" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -70,7 +70,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Merge.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
+            <state relative-caret-position="391">
               <caret line="28" column="33" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -82,17 +82,27 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/parse2C.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="355">
+            <state relative-caret-position="476">
               <caret line="33" column="9" selection-start-line="33" selection-start-column="9" selection-end-line="33" selection-end-column="9" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/PreProcess.java">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/GenerateData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1158">
-              <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+            <state relative-caret-position="392">
+              <caret line="551" column="25" lean-forward="true" selection-start-line="551" selection-start-column="25" selection-end-line="551" selection-end-column="25" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="method#mergeDifferentFiles#0;class#Test#0" />
+                <element signature="e#7142#7143#0" expanded="true" />
+                <element signature="e#7205#7206#0" expanded="true" />
+                <element signature="e#7259#7260#0" expanded="true" />
+                <element signature="e#7329#7330#0" expanded="true" />
+                <element signature="method#validationSourcererCCResult#0;class#Test#0" />
+                <element signature="method#getAllJavaFiles#0;class#Test#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -100,8 +110,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/ProcessCFG.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="236">
-              <caret line="49" selection-start-line="49" selection-end-line="49" />
+            <state relative-caret-position="527">
+              <caret line="37" column="44" selection-start-line="37" selection-start-column="44" selection-end-line="37" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -109,8 +119,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/ProcessEdgeList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="236">
-              <caret line="32" column="124" selection-start-line="32" selection-start-column="116" selection-end-line="32" selection-end-column="124" />
+            <state relative-caret-position="391">
+              <caret line="29" column="38" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -118,8 +128,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/ProcessSingleJoern.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1719">
-              <caret line="35" column="9" lean-forward="true" selection-start-line="35" selection-start-column="9" selection-end-line="35" selection-end-column="9" />
+            <state relative-caret-position="425">
+              <caret line="31" column="30" selection-start-line="31" selection-start-column="30" selection-end-line="31" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -135,9 +145,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>+ chengji ( aw [ i ] . qimocj ) + xibu ( aw [ i ] . qimocj , aw [ i ] . ynxibu ) + gongxian ( aw [ i ] . banpingcj , aw</find>
-      <find>size:</find>
-      <find>8554421</find>
       <find>amazing</find>
       <find>ama</find>
       <find>11297, 1117</find>
@@ -165,6 +172,9 @@
       <find>E-</find>
       <find>getword2vecFeatureEmbedding</find>
       <find>CSVReader</find>
+      <find>embedtrain</find>
+      <find>.csv</find>
+      <find>mergeCFGAndIdent</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -187,6 +197,7 @@
         <option value="$PROJECT_DIR$/src/main/java/clonedetection/CFG.java" />
         <option value="$PROJECT_DIR$/src/main/java/clonedetection/Tool.java" />
         <option value="$PROJECT_DIR$/src/main/java/clonedetection/Test.java" />
+        <option value="$PROJECT_DIR$/src/main/java/clonedetection/GenerateData.java" />
       </list>
     </option>
   </component>
@@ -214,10 +225,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="51" />
+    <option name="x" value="891" />
     <option name="y" value="27" />
-    <option name="width" value="935" />
-    <option name="height" value="1053" />
+    <option name="width" value="925" />
+    <option name="height" value="789" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -227,6 +238,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -264,14 +277,12 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551429035744" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1554798843245" />
     <property name="last_opened_file_path" value="$USER_HOME$/Project/StaticAnalyzer/ASC_CLI" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -294,7 +305,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Test">
+  <component name="RunManager" selected="Application.GenerateData">
     <configuration name="AST" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="clonedetection.AST" />
       <module name="CloneDetection" />
@@ -315,9 +326,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="clonedetection.Main" />
+    <configuration name="GenerateData" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="clonedetection.GenerateData" />
       <module name="CloneDetection" />
+      <option name="VM_PARAMETERS" value="-Xmx4096M " />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="clonedetection.*" />
@@ -328,10 +340,9 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="clonedetection.Test" />
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="clonedetection.Main" />
       <module name="CloneDetection" />
-      <option name="VM_PARAMETERS" value="-Xmx4096M " />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="clonedetection.*" />
@@ -359,12 +370,12 @@
       <item itemvalue="Application.AST" />
       <item itemvalue="Application.CFG" />
       <item itemvalue="Application.Main" />
-      <item itemvalue="Application.Test" />
+      <item itemvalue="Application.GenerateData" />
       <item itemvalue="Application.Tool" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Test" />
+        <item itemvalue="Application.GenerateData" />
         <item itemvalue="Application.Tool" />
         <item itemvalue="Application.CFG" />
         <item itemvalue="Application.Main" />
@@ -442,12 +453,17 @@
       <workItem from="1551369280507" duration="554000" />
       <workItem from="1551406074962" duration="858000" />
       <workItem from="1551408220604" duration="11681000" />
-      <workItem from="1554262434917" duration="4211000" />
+      <workItem from="1554262434917" duration="4983000" />
+      <workItem from="1554362644660" duration="6000" />
+      <workItem from="1554695450253" duration="16788000" />
+      <workItem from="1554770220633" duration="778000" />
+      <workItem from="1554772413726" duration="6312000" />
+      <workItem from="1554792664414" duration="6135000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="261703000" />
+    <option name="totallyTimeSpent" value="292494000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -462,7 +478,7 @@
     <frame x="51" y="27" width="1869" height="1053" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1405821" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14881933" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -470,8 +486,8 @@
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49917626" weight="0.348964" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3293348" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49752882" visible="true" weight="0.28244275" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3991276" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -479,9 +495,9 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3293348" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.22246456" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50082374" side_tool="true" weight="0.43184295" />
-      <window_info anchor="bottom" id="Messages" order="12" weight="0.45692477" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.33587787" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50247115" side_tool="true" weight="0.31624863" />
+      <window_info anchor="bottom" id="Messages" order="12" sideWeight="0.49917626" weight="0.45692477" />
       <window_info anchor="bottom" id="Duplicate detector" order="13" weight="0.3293348" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -588,26 +604,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/AST.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="746">
-          <caret line="160" column="1" lean-forward="true" selection-start-line="160" selection-start-column="1" selection-end-line="160" selection-end-column="1" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/CFG.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="729">
-          <caret line="108" column="5" selection-start-line="108" selection-start-column="5" selection-end-line="108" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/CodeRepresentation.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="697">
@@ -639,16 +635,63 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/TreeNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/PreProcess.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Tool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="22253">
+          <caret line="1323" column="9" selection-start-line="1323" selection-start-column="9" selection-end-line="1323" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/AST.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2499">
+          <caret line="160" column="1" selection-start-line="160" selection-start-column="1" selection-end-line="160" selection-end-column="1" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/CFG.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1734">
+          <caret line="108" column="5" selection-start-line="108" selection-start-column="5" selection-end-line="108" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
-          <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
+          <caret line="24" column="35" selection-start-line="24" selection-start-column="35" selection-end-line="24" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Merge.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
+        <state relative-caret-position="391">
           <caret line="28" column="33" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -658,68 +701,45 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/parse2C.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="355">
+        <state relative-caret-position="476">
           <caret line="33" column="9" selection-start-line="33" selection-start-column="9" selection-end-line="33" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/PreProcess.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1158">
-          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/ProcessCFG.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="49" selection-start-line="49" selection-end-line="49" />
+        <state relative-caret-position="527">
+          <caret line="37" column="44" selection-start-line="37" selection-start-column="44" selection-end-line="37" selection-end-column="44" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/ProcessEdgeList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="32" column="124" selection-start-line="32" selection-start-column="116" selection-end-line="32" selection-end-column="124" />
+        <state relative-caret-position="391">
+          <caret line="29" column="38" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/ProcessSingleJoern.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1719">
-          <caret line="35" column="9" lean-forward="true" selection-start-line="35" selection-start-column="9" selection-end-line="35" selection-end-column="9" />
+        <state relative-caret-position="425">
+          <caret line="31" column="30" selection-start-line="31" selection-start-column="30" selection-end-line="31" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Test.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/GenerateData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="757">
-          <caret line="485" column="1" lean-forward="true" selection-start-line="485" selection-start-column="1" selection-end-line="485" selection-end-column="1" />
+        <state relative-caret-position="392">
+          <caret line="551" column="25" lean-forward="true" selection-start-line="551" selection-start-column="25" selection-end-line="551" selection-end-column="25" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#mergeDifferentFiles#0;class#Test#0" />
+            <element signature="e#7142#7143#0" expanded="true" />
+            <element signature="e#7205#7206#0" expanded="true" />
+            <element signature="e#7259#7260#0" expanded="true" />
+            <element signature="e#7329#7330#0" expanded="true" />
             <element signature="method#validationSourcererCCResult#0;class#Test#0" />
             <element signature="method#getAllJavaFiles#0;class#Test#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/TreeNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/Tool.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="423">
-          <caret line="1383" column="98" selection-start-line="1383" selection-start-column="98" selection-end-line="1383" selection-end-column="98" />
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

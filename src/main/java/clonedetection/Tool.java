@@ -1315,7 +1315,6 @@ public class Tool {
         List<Double> res = new ArrayList<>();
         try {
             String s = FileUtils.readFileToString(file, "utf-8");
-            System.out.println(file.getAbsolutePath());
             String[] ss = s.split(" ");
             for (String s1 : ss) {
                 res.add(Double.parseDouble(s1));

@@ -9,11 +9,10 @@ import org.apache.commons.lang.RandomStringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class Test {
+public class GenerateData {
     String testBasePath = "/home/cary/Documents/Data/test";
 
     void generateEdge(File dot) {
@@ -270,18 +269,25 @@ public class Test {
     void generateHOPEDataCSV() {
         Tool tool = new Tool();
 
+//        String HOPEEmbed = "/media/cary/DATA/CloneData/emdtest/";
+
+//        String HOPEEmbed = "/media/cary/DATA/CloneData/emdtrain/";
         String HOPEEmbed = "/home/cary/Documents/Data/CloneData/emdtest/";
+
         List<List<File>> featureHOPEFiles = tool.getFile(HOPEEmbed);
 
         try {
-            Writer writer = Files.newBufferedWriter(Paths.get("/home/cary/Documents/Data/CloneData/test_cfg.csv"));
+            Writer writer = Files.newBufferedWriter(Paths.get("/home/cary/Documents/Data/CloneData/csv/test_cfg.csv"));
             CSVWriter csvWriter = new CSVWriter(writer);
 //            String[] header = {"f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "predictions"};
             String[] header = {"1000000", "8", "similar", "dissimilar"};
 
             csvWriter.writeNext(header);
 
+            int cnt = 0;
+
             for (List<File> embedFolderList : featureHOPEFiles) {
+                System.out.println(cnt++ + "/" + featureHOPEFiles.size());
                 for (int i = 0; i < embedFolderList.size(); i++) {
                     List<Double> data1 = tool.getVecFromCFG(Objects.requireNonNull(embedFolderList.get(i).listFiles())[0]);
 
@@ -297,7 +303,10 @@ public class Test {
 
             File[] embedFolders = new File(HOPEEmbed).listFiles();
             assert embedFolders != null;
+
+            cnt = 0;
             for (int i = 0; i < embedFolders.length; i++) {
+                System.out.println(cnt++ + "/" + embedFolders.length);
                 for (int j = 0; j < embedFolders.length; j++) {
                     if (i != j) {
                         File[] emdList1 = embedFolders[i].listFiles();
@@ -332,16 +341,20 @@ public class Test {
     void generateWord2VecDataCSV() {
         Tool tool = new Tool();
 
+//        String HOPEEmbed = "/media/cary/DATA/CloneData/emdtest/";
         String HOPEEmbed = "/home/cary/Documents/Data/CloneData/emdtest/";
+
         List<List<File>> featureHOPEFiles = tool.getFile(HOPEEmbed);
 
         try {
-            Writer writer = Files.newBufferedWriter(Paths.get("/home/cary/Documents/Data/CloneData/test.csv"));
+            Writer writer = Files.newBufferedWriter(Paths.get("/home/cary/Documents/Data/CloneData/csv/test_word.csv"));
+
             CSVWriter csvWriter = new CSVWriter(writer);
-            String[] header = {"1000000", "100", "similar", "dissimilar"};
+            String[] header = {"1000000", "32", "similar", "dissimilar"};
 
             csvWriter.writeNext(header);
 
+            //0: similar
             for (List<File> embedFolderList : featureHOPEFiles) {
                 for (int i = 0; i < embedFolderList.size(); i++) {
                     List<Double> data1 = tool.getVecFromIdent(Objects.requireNonNull(embedFolderList.get(i).listFiles())[0]);
@@ -363,6 +376,7 @@ public class Test {
                 }
             }
 
+            //1:dissimilar
             File[] embedFolders = new File(HOPEEmbed).listFiles();
             assert embedFolders != null;
             for (int i = 0; i < embedFolders.length; i++) {
@@ -425,7 +439,7 @@ public class Test {
             String[] cfg;
             String[] ident;
 
-            CSVWriter csvWriter = new CSVWriter(Files.newBufferedWriter(Paths.get("/home/cary/Documents/Data/CloneData/train_merge.csv")));
+            CSVWriter csvWriter = new CSVWriter(Files.newBufferedWriter(Paths.get("/home/cary/Documents/Data/CloneData/csv/train_merge.csv")));
 
             cfgCSV.readNext();
             identCSV.readNext();
@@ -460,26 +474,113 @@ public class Test {
         return 2 * p * r / (p + r);
     }
 
+    //均衡数据，让标签为1的数据和标签为0的数据均衡
+    void balanceDataLabel(String csvPath, String balancedCsvPath) {
+        int zeroCnt = 0;
+        int oneCnt = 0;
+        try {
+            Reader reader = Files.newBufferedReader(Paths.get(csvPath));
+            CSVReader csvReader = new CSVReader(reader);
 
+            String[] content;
+            while ((content = csvReader.readNext()) != null) {
+                if (!content[content.length - 1].contains("similar")) {
+                    if (content[content.length - 1].equals("0")) {
+                        zeroCnt++;
+                    } else if (content[content.length - 1].equals("1")) {
+                        oneCnt++;
+                    }
+                }
+            }
+            csvReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int smallCnt = zeroCnt < oneCnt ? zeroCnt : oneCnt;
+        int bigCnt = zeroCnt > oneCnt ? zeroCnt : oneCnt;
+        int[] arr = new int[bigCnt];
+        for (int i = 0; i < bigCnt; i++) {
+            arr[i] = i;
+        }
+        HashSet<Integer> set = new HashSet<>();
+        while (set.size() < smallCnt) {
+            int idx = (int) (Math.random() * arr.length);
+            while (!set.isEmpty() && set.contains(idx)) {
+                idx = (int) (Math.random() * arr.length);
+            }
+            set.add(idx);
+        }
+
+        boolean zero = (smallCnt == zeroCnt);
+
+        zeroCnt = 0;
+        oneCnt = 0;
+
+        try {
+            Writer writer = Files.newBufferedWriter(Paths.get(balancedCsvPath));
+            CSVWriter csvWriter = new CSVWriter(writer);
+
+            Reader reader = Files.newBufferedReader(Paths.get(csvPath));
+            CSVReader csvReader = new CSVReader(reader);
+
+            String[] content;
+
+            //写头部
+            content = csvReader.readNext();
+            csvWriter.writeNext(content);
+
+            while ((content = csvReader.readNext()) != null) {
+                if (content[content.length - 1].equals("0")) {
+                    if (zero) {
+                        csvWriter.writeNext(content);
+                    } else {
+                        if (set.contains(zeroCnt)) {
+                            csvWriter.writeNext(content);
+                        }
+                    }
+                    zeroCnt++;
+                } else if (content[content.length - 1].equals("1")) {
+                    if (!zero) {
+                        csvWriter.writeNext(content);
+                    } else {
+                        if (set.contains(oneCnt)) {
+                            csvWriter.writeNext(content);
+                        }
+                    }
+                    oneCnt++;
+                }
+            }
+            csvWriter.flush();
+            csvReader.close();
+            csvWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
-        Test test = new Test();
+        GenerateData generateData = new GenerateData();
 
-        System.out.println(test.cal(0.49882966, 0.687086));
+        generateData.balanceDataLabel("/home/cary/Documents/Data/CloneData/csv/train_word.csv",
+                "/home/cary/Documents/Data/CloneData/csv/b_train_word.csv");
 
-//        test.mergeCFGAndIdent("/home/cary/Documents/Data/CloneData/train_cfg.csv",
-//                "/home/cary/Documents/Data/CloneData/train_word.csv");
+//        System.out.println(generateData.cal(0.5025686, 0.606148));
+
+//        generateData.mergeCFGAndIdent("/home/cary/Documents/Data/CloneData/csv/test_cfg.csv", "/home/cary/Documents/Data/CloneData/csv/test_word.csv");
 
 //        int bags = 2;
 //        int numinBags = 500;
-//
-//        System.out.println(test.countClone(bags, numinBags));
-//        System.out.println(test.countDifferent(bags, numinBags));
 
-//        test.generateHOPEDataCSV();
-//        test.generateSampleCSV();
-//        test.calculateDistanceBetweenEmd(new File("/home/cary/Documents/Data/test/cfg_emd/3246696_simplify.emd"), new File("/home/cary/Documents/Data/test/cfg_emd/3320433_simplify.emd"));
-//        test.generateEdge(new File("/home/cary/Documents/Data/test/cfg/173.dot"));
+//        System.out.println(generateData.countClone(bags, numinBags));
+//        System.out.println(generateData.countDifferent(bags, numinBags));
+
+//        generateData.generateHOPEDataCSV();
+//        generateData.generateWord2VecDataCSV();
+
+//        generateData.generateSampleCSV();
+//        generateData.calculateDistanceBetweenEmd(new File("/home/cary/Documents/Data/generateData/cfg_emd/3246696_simplify.emd"), new File("/home/cary/Documents/Data/generateData/cfg_emd/3320433_simplify.emd"));
+//        generateData.generateEdge(new File("/home/cary/Documents/Data/generateData/cfg/173.dot"));
     }
 
 
