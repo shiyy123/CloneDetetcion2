@@ -2,15 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d9b53b5f-6067-4387-9f94-22e8aac212a7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.attach_pid26324" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.attach_pid4791" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.attach_pid6515" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.attach_pid6936" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/clonedetection/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clonedetection/GenerateData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/clonedetection/Tool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clonedetection/Tool.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/Test.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/Tool.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/clonedetection/Tool.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/clonedetection/GenerateData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clonedetection/GenerateData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/clonedetection/GenerateData.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/clonedetection/GenerateData.class" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -91,17 +85,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/GenerateData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="392">
-              <caret line="551" column="25" lean-forward="true" selection-start-line="551" selection-start-column="25" selection-end-line="551" selection-end-column="25" />
+            <state relative-caret-position="452">
+              <caret line="321" column="44" lean-forward="true" selection-start-line="321" selection-start-column="44" selection-end-line="321" selection-end-column="44" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="method#mergeDifferentFiles#0;class#Test#0" />
-                <element signature="e#7142#7143#0" expanded="true" />
-                <element signature="e#7205#7206#0" expanded="true" />
-                <element signature="e#7259#7260#0" expanded="true" />
-                <element signature="e#7329#7330#0" expanded="true" />
-                <element signature="method#validationSourcererCCResult#0;class#Test#0" />
-                <element signature="method#getAllJavaFiles#0;class#Test#0" />
               </folding>
             </state>
           </provider>
@@ -145,7 +132,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>amazing</find>
       <find>ama</find>
       <find>11297, 1117</find>
       <find>11297, 11179</find>
@@ -175,6 +161,7 @@
       <find>embedtrain</find>
       <find>.csv</find>
       <find>mergeCFGAndIdent</find>
+      <find>balanceDataLabel</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -239,7 +226,6 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -277,12 +263,13 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1554798843245" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1554973337227" />
     <property name="last_opened_file_path" value="$USER_HOME$/Project/StaticAnalyzer/ASC_CLI" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -458,12 +445,16 @@
       <workItem from="1554695450253" duration="16788000" />
       <workItem from="1554770220633" duration="778000" />
       <workItem from="1554772413726" duration="6312000" />
-      <workItem from="1554792664414" duration="6135000" />
+      <workItem from="1554792664414" duration="11605000" />
+      <workItem from="1554823163559" duration="1792000" />
+      <workItem from="1554875554774" duration="232000" />
+      <workItem from="1554885786214" duration="4523000" />
+      <workItem from="1554948252389" duration="11599000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="292494000" />
+    <option name="totallyTimeSpent" value="316110000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -478,7 +469,7 @@
     <frame x="51" y="27" width="1869" height="1053" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14881933" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15540911" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -729,17 +720,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/clonedetection/GenerateData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="392">
-          <caret line="551" column="25" lean-forward="true" selection-start-line="551" selection-start-column="25" selection-end-line="551" selection-end-column="25" />
+        <state relative-caret-position="452">
+          <caret line="321" column="44" lean-forward="true" selection-start-line="321" selection-start-column="44" selection-end-line="321" selection-end-column="44" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="method#mergeDifferentFiles#0;class#Test#0" />
-            <element signature="e#7142#7143#0" expanded="true" />
-            <element signature="e#7205#7206#0" expanded="true" />
-            <element signature="e#7259#7260#0" expanded="true" />
-            <element signature="e#7329#7330#0" expanded="true" />
-            <element signature="method#validationSourcererCCResult#0;class#Test#0" />
-            <element signature="method#getAllJavaFiles#0;class#Test#0" />
           </folding>
         </state>
       </provider>
